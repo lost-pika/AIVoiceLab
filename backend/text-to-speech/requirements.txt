@@ -1,0 +1,10 @@
+# Install these with Python 3.11. Python 3.14 currently fails while building
+# chatterbox-tts dependencies.
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.6.0+cpu
+torchaudio==2.6.0+cpu
+modal
+pydantic
+fastapi
+requests
+chatterbox-tts
