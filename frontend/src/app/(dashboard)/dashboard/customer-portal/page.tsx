@@ -3,12 +3,18 @@ import { redirect } from 'next/navigation';
 import CustomerPortalRedirect from '~/components/sidebar/CustomerPortalRedirect';
 import { auth } from '~/lib/auth';
 
+export const dynamic = 'force-dynamic';
+
 export default async function Page() {
+  if (process.env.NEXT_PUBLIC_POLAR_ENABLED !== 'true') {
+    redirect('/dashboard');
+  }
+
   const session = await auth.api.getSession({
     headers: await headers(),
   });
   if (!session) {
-    redirect("/auth/sign-in");
+    redirect('/auth/sign-in');
   }
   return <CustomerPortalRedirect />;
 }
