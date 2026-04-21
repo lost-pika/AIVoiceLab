@@ -50,7 +50,7 @@ export default function AppSidebar() {
           <Upgrade />
         </div>
         <UserButton
-          variant="outline"
+          // variant="outline"
           className="border-muted-foreground/20 hover:border-primary/50 w-full transition-colors"
           disableDefaultLinks={true}
           additionalLinks={
@@ -80,3 +80,4 @@ export default function AppSidebar() {
     </Sidebar>
   );
 }
+

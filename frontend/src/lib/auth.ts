@@ -6,79 +6,78 @@ import { checkout, polar, portal, webhooks } from "@polar-sh/better-auth";
 import { env } from '~/env';
 import { db } from '~/server/db';
 
-const polarEnabled =
-  env.POLAR_ENABLED === "true" &&
-  !!env.POLAR_ACCESS_TOKEN &&
-  !!env.POLAR_WEBHOOK_SECRET;
+const polarAccessToken = env.POLAR_ACCESS_TOKEN;
+const polarWebhookSecret = env.POLAR_WEBHOOK_SECRET;
 
-const polarPlugins = polarEnabled
-  ? [
-      polar({
-        client: new Polar({
-          accessToken: env.POLAR_ACCESS_TOKEN,
-          server: "sandbox",
-        }),
-        createCustomerOnSignUp: true,
-        use: [
-          checkout({
-            products: [
-              {
-                productId: "c0590765-eac9-4c0b-99d2-fc8f98920eba",
-                slug: "small",
-              },
-              {
-                productId: "78276150-2dd9-437b-8fe9-8671df481b66",
-                slug: "medium",
-              },
-              {
-                productId: "0f81ee54-c80a-4907-9592-073b0b606af4",
-                slug: "large",
-              },
-            ],
-            successUrl: "/dashboard",
-            authenticatedUsersOnly: true,
+const polarPlugins =
+  env.POLAR_ENABLED === "true" && polarAccessToken && polarWebhookSecret
+    ? [
+        polar({
+          client: new Polar({
+            accessToken: polarAccessToken,
+            server: "sandbox",
           }),
-          portal(),
-          webhooks({
-            secret: env.POLAR_WEBHOOK_SECRET,
-            onOrderPaid: async (order) => {
-              const externalCustomerId = order.data.customer.externalId;
-
-              if (!externalCustomerId) {
-                console.error("No external customer ID found.");
-                throw new Error("No external customer id found.");
-              }
-
-              const productId = order.data.productId;
-
-              let creditsToAdd = 0;
-
-              switch (productId) {
-                case "c0590765-eac9-4c0b-99d2-fc8f98920eba":
-                  creditsToAdd = 50;
-                  break;
-                case "78276150-2dd9-437b-8fe9-8671df481b66":
-                  creditsToAdd = 200;
-                  break;
-                case "0f81ee54-c80a-4907-9592-073b0b606af4":
-                  creditsToAdd = 400;
-                  break;
-              }
-
-              await db.user.update({
-                where: { id: externalCustomerId },
-                data: {
-                  credits: {
-                    increment: creditsToAdd,
-                  },
+          createCustomerOnSignUp: true,
+          use: [
+            checkout({
+              products: [
+                {
+                  productId: "c0590765-eac9-4c0b-99d2-fc8f98920eba",
+                  slug: "small",
                 },
-              });
-            },
-          }),
-        ],
-      }),
-    ]
-  : [];
+                {
+                  productId: "78276150-2dd9-437b-8fe9-8671df481b66",
+                  slug: "medium",
+                },
+                {
+                  productId: "0f81ee54-c80a-4907-9592-073b0b606af4",
+                  slug: "large",
+                },
+              ],
+              successUrl: "/dashboard",
+              authenticatedUsersOnly: true,
+            }),
+            portal(),
+            webhooks({
+              secret: polarWebhookSecret,
+              onOrderPaid: async (order) => {
+                const externalCustomerId = order.data.customer.externalId;
+
+                if (!externalCustomerId) {
+                  console.error("No external customer ID found.");
+                  throw new Error("No external customer id found.");
+                }
+
+                const productId = order.data.productId;
+
+                let creditsToAdd = 0;
+
+                switch (productId) {
+                  case "c0590765-eac9-4c0b-99d2-fc8f98920eba":
+                    creditsToAdd = 50;
+                    break;
+                  case "78276150-2dd9-437b-8fe9-8671df481b66":
+                    creditsToAdd = 200;
+                    break;
+                  case "0f81ee54-c80a-4907-9592-073b0b606af4":
+                    creditsToAdd = 400;
+                    break;
+                }
+
+                await db.user.update({
+                  where: { id: externalCustomerId },
+                  data: {
+                    credits: {
+                      increment: creditsToAdd,
+                    },
+                  },
+                });
+              },
+            }),
+          ],
+        }),
+      ]
+    : [];
 
 const prisma = new PrismaClient();
 export const auth = betterAuth({
