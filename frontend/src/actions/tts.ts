@@ -37,7 +37,7 @@ const isModalDashboardUrl = (url: string) => {
   }
 };
 
-const getModalProxyAuthHeaders = () => {
+const getModalProxyAuthHeaders = (): Record<string, string> => {
   const modalKey = env.MODAL_PROXY_TOKEN_ID ?? env.MODAL_API_KEY;
   const modalSecret = env.MODAL_PROXY_TOKEN_SECRET ?? env.MODAL_API_SECRET;
 
