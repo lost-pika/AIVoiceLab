@@ -37,6 +37,20 @@ const isModalDashboardUrl = (url: string) => {
   }
 };
 
+const getModalProxyAuthHeaders = () => {
+  const modalKey = env.MODAL_PROXY_TOKEN_ID ?? env.MODAL_API_KEY;
+  const modalSecret = env.MODAL_PROXY_TOKEN_SECRET ?? env.MODAL_API_SECRET;
+
+  if (!modalKey || !modalSecret) {
+    return {};
+  }
+
+  return {
+    "Modal-Key": modalKey,
+    "Modal-Secret": modalSecret,
+  };
+};
+
 export async function generateSpeech(
   data: GenerateSpeechData,
 ): Promise<GenerateSpeechResult> {
@@ -82,10 +96,7 @@ export async function generateSpeech(
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        ...(env.MODAL_API_KEY ? { "Modal-Key": env.MODAL_API_KEY } : {}),
-        ...(env.MODAL_API_SECRET
-          ? { "Modal-Secret": env.MODAL_API_SECRET }
-          : {}),
+        ...getModalProxyAuthHeaders(),
       },
       body: JSON.stringify({
         text: data.text,
@@ -105,6 +116,19 @@ export async function generateSpeech(
             "The configured MODAL_API_URL does not accept POST requests. Use the deployed Modal web endpoint URL, not the Modal dashboard URL.",
         };
       }
+
+      if (
+        response.status === 401 &&
+        (errorText.includes("modal-http: invalid credentials") ||
+          errorText.includes("modal-http: missing credentials"))
+      ) {
+        return {
+          success: false,
+          error:
+            "Modal proxy authentication failed. Verify your proxy auth tokens for MODAL_PROXY_TOKEN_ID / MODAL_PROXY_TOKEN_SECRET.",
+        };
+      }
+
       return {
         success: false,
         error: errorText || `Failed to generate speech (${response.status})`,

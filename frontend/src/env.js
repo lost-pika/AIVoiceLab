@@ -20,6 +20,8 @@ export const env = createEnv({
     MODAL_API_URL: z.string().url(),
     MODAL_API_KEY: z.string().optional(),
     MODAL_API_SECRET: z.string().optional(),
+    MODAL_PROXY_TOKEN_ID: z.string().optional(),
+    MODAL_PROXY_TOKEN_SECRET: z.string().optional(),
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
@@ -53,6 +55,8 @@ export const env = createEnv({
     MODAL_API_URL: process.env.MODAL_API_URL,
     MODAL_API_KEY: process.env.MODAL_API_KEY,
     MODAL_API_SECRET: process.env.MODAL_API_SECRET,
+    MODAL_PROXY_TOKEN_ID: process.env.MODAL_PROXY_TOKEN_ID,
+    MODAL_PROXY_TOKEN_SECRET: process.env.MODAL_PROXY_TOKEN_SECRET,
     NEXT_PUBLIC_POLAR_ENABLED: process.env.NEXT_PUBLIC_POLAR_ENABLED,
   },
   /**
