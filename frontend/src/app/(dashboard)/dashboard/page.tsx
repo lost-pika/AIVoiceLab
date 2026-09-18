@@ -17,12 +17,13 @@ import {
   FolderOpen,
 } from "lucide-react";
 import { authClient } from "~/lib/auth-client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { getUserAudioProjects } from "~/actions/tts";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { AddCreditsModal } from "~/components/credits/add-credits-modal";
+import { toast } from "sonner";
 
 interface AudioProject {
   id: string;
@@ -45,7 +46,7 @@ interface UserStats {
   thisWeek: number;
 }
 
-export default function Dashboard() {
+function DashboardInner() {
   const [isLoading, setIsLoading] = useState(true);
   const [audioProjects, setAudioProjects] = useState<AudioProject[]>([]);
   const [userStats, setUserStats] = useState<UserStats>({
@@ -61,6 +62,24 @@ export default function Dashboard() {
     createdAt?: string | Date;
   } | null>(null);
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // Payment success toast from Polar redirect
+  useEffect(() => {
+    const paymentStatus = searchParams.get("payment");
+    const creditsAdded = searchParams.get("credits");
+    if (paymentStatus === "success" && creditsAdded) {
+      toast.success(`Payment successful! +${creditsAdded} credits added to your account.`, {
+        description: "Your credits are now available for generating audio.",
+        duration: 6000,
+      });
+      // Clean up query params from URL
+      const url = new URL(window.location.href);
+      url.searchParams.delete("payment");
+      url.searchParams.delete("credits");
+      router.replace(url.pathname);
+    }
+  }, [searchParams, router]);
 
   useEffect(() => {
     const initializeDashboard = async () => {
@@ -397,5 +416,13 @@ export default function Dashboard() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+export default function Dashboard() {
+  return (
+    <Suspense fallback={null}>
+      <DashboardInner />
+    </Suspense>
   );
 }

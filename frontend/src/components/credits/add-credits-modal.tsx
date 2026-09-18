@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Coins, Zap, Check, Gift, Loader2 } from "lucide-react";
+import { Coins, Zap, Check, Gift, Loader2, ExternalLink, CreditCard } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -12,6 +12,7 @@ import {
 } from "~/components/ui/dialog";
 import { Button } from "~/components/ui/button";
 import { addCreditsAction } from "~/actions/credits";
+import { createCheckoutSession } from "~/actions/checkout";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
@@ -30,7 +31,7 @@ const CREDIT_PACKS = [
     amount: 50,
     price: "$5",
     title: "Starter Pack",
-    desc: "Great for quick voice tests and short audio snippets (~5,000 characters).",
+    desc: "Quick voice tests & short audio snippets (~5,000 chars).",
     badge: null,
     gradient: "from-blue-500/10 to-indigo-500/10 border-blue-500/20",
   },
@@ -39,7 +40,7 @@ const CREDIT_PACKS = [
     amount: 200,
     price: "$15",
     title: "Creator Studio",
-    desc: "Perfect for content creators, podcasts, and long scripts (~20,000 characters).",
+    desc: "Podcasts, long scripts, and content creators (~20,000 chars).",
     badge: "Most Popular",
     gradient: "from-violet-500/20 via-primary/20 to-cyan-500/20 border-primary/40 shadow-lg shadow-primary/5",
   },
@@ -48,11 +49,13 @@ const CREDIT_PACKS = [
     amount: 500,
     price: "$30",
     title: "Studio Pro",
-    desc: "For heavy production, multi-language narration, and long audiobooks (~50,000 characters).",
+    desc: "Heavy production, multi-language & audiobooks (~50,000 chars).",
     badge: "Best Value",
     gradient: "from-emerald-500/10 to-teal-500/10 border-emerald-500/20",
   },
 ];
+
+const polarEnabled = process.env.NEXT_PUBLIC_POLAR_ENABLED === "true";
 
 export function AddCreditsModal({
   currentCredits,
@@ -63,7 +66,7 @@ export function AddCreditsModal({
   onCreditsAdded,
 }: AddCreditsModalProps) {
   const [internalOpen, setInternalOpen] = useState(false);
-  const [isAdding, setIsAdding] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [selectedPack, setSelectedPack] = useState<string>("creator");
   const router = useRouter();
 
@@ -71,33 +74,71 @@ export function AddCreditsModal({
   const isOpen = isControlled ? controlledOpen : internalOpen;
   const setIsOpen = isControlled ? setControlledOpen : setInternalOpen;
 
-  const handleTopUp = async (amount: number, packTitle: string) => {
-    setIsAdding(true);
+  // Free daily claim (always uses demo/action path)
+  const handleDailyClaim = async () => {
+    setIsLoading(true);
     try {
-      const res = await addCreditsAction(amount);
-      if (!res.success) {
-        throw new Error(res.error ?? "Failed to add credits");
-      }
+      const res = await addCreditsAction(25);
+      if (!res.success) throw new Error(res.error ?? "Failed to claim bonus");
 
-      toast.success(`Successfully added ${amount} credits to your account!`, {
-        description: `Your new balance is ${res.credits ?? ""} credits.`,
+      toast.success("Daily bonus claimed! +25 credits added.", {
+        description: `New balance: ${res.credits ?? ""} credits.`,
       });
 
       if (res.credits !== undefined) {
-        window.dispatchEvent(
-          new CustomEvent("credits-updated", { detail: res.credits })
-        );
+        window.dispatchEvent(new CustomEvent("credits-updated", { detail: res.credits }));
         onCreditsAdded?.(res.credits);
       }
 
       router.refresh();
       setIsOpen?.(false);
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Error adding credits");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Error claiming bonus");
     } finally {
-      setIsAdding(false);
+      setIsLoading(false);
     }
   };
+
+  // Main "Buy Credits" handler — uses Polar in production, demo action otherwise
+  const handleBuyCredits = async () => {
+    setIsLoading(true);
+    try {
+      if (polarEnabled) {
+        const result = await createCheckoutSession(selectedPack);
+        if (!result.success || !result.url) {
+          throw new Error(result.error ?? "Could not initiate checkout.");
+        }
+        // Redirect to Polar hosted checkout
+        window.location.href = result.url;
+        return; // Don't reset loading — we're navigating away
+      } else {
+        // Offline / demo mode
+        const pack = CREDIT_PACKS.find((p) => p.id === selectedPack);
+        if (!pack) return;
+
+        const res = await addCreditsAction(pack.amount);
+        if (!res.success) throw new Error(res.error ?? "Failed to add credits");
+
+        toast.success(`Successfully added ${pack.amount} credits!`, {
+          description: `New balance: ${res.credits ?? ""} credits.`,
+        });
+
+        if (res.credits !== undefined) {
+          window.dispatchEvent(new CustomEvent("credits-updated", { detail: res.credits }));
+          onCreditsAdded?.(res.credits);
+        }
+
+        router.refresh();
+        setIsOpen?.(false);
+      }
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Error processing payment");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const selectedPackData = CREDIT_PACKS.find((p) => p.id === selectedPack);
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -116,7 +157,7 @@ export function AddCreditsModal({
                   Top Up Audio Credits
                 </DialogTitle>
                 <DialogDescription className="text-xs text-muted-foreground">
-                  Choose a credit package or claim daily bonus credits
+                  Choose a credit package or claim your daily bonus
                 </DialogDescription>
               </div>
             </div>
@@ -141,21 +182,21 @@ export function AddCreditsModal({
             </div>
             <div>
               <p className="text-xs font-bold text-foreground">
-                Instant Daily Bonus: +25 Free Credits
+                Daily Bonus: +25 Free Credits
               </p>
               <p className="text-[11px] text-muted-foreground">
-                Enjoy 25 free credits on us for testing your voice clones!
+                Claim 25 free credits every day for testing.
               </p>
             </div>
           </div>
           <Button
             size="sm"
             variant="outline"
-            disabled={isAdding}
-            onClick={() => handleTopUp(25, "Daily Bonus")}
+            disabled={isLoading}
+            onClick={handleDailyClaim}
             className="h-8 border-emerald-500/40 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20 text-xs font-semibold shrink-0"
           >
-            {isAdding ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : "Claim Free"}
+            {isLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : "Claim Free"}
           </Button>
         </div>
 
@@ -215,35 +256,44 @@ export function AddCreditsModal({
           })}
         </div>
 
-        {/* Action Button */}
+        {/* Action Footer */}
         <div className="mt-3 flex items-center justify-between border-t border-border/50 pt-4">
           <p className="text-[11px] text-muted-foreground flex items-center gap-1.5">
             <Zap className="h-3.5 w-3.5 text-amber-500" />
-            1 Credit = 100 characters of natural synthesized audio
+            1 Credit = 100 characters of synthesized audio
           </p>
           <Button
-            disabled={isAdding}
-            onClick={() => {
-              const pack = CREDIT_PACKS.find((p) => p.id === selectedPack);
-              if (pack) {
-                handleTopUp(pack.amount, pack.title);
-              }
-            }}
+            disabled={isLoading}
+            onClick={handleBuyCredits}
             className="gap-2 bg-gradient-to-r from-primary via-indigo-600 to-cyan-600 hover:from-primary/90 hover:to-cyan-600/90 text-white shadow-md shadow-primary/20 font-semibold text-xs h-9 px-5"
           >
-            {isAdding ? (
+            {isLoading ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
-                Adding Credits...
+                {polarEnabled ? "Redirecting..." : "Adding..."}
               </>
             ) : (
               <>
-                <Coins className="h-4 w-4" />
-                Add {CREDIT_PACKS.find((p) => p.id === selectedPack)?.amount} Credits
+                {polarEnabled ? (
+                  <CreditCard className="h-4 w-4" />
+                ) : (
+                  <Coins className="h-4 w-4" />
+                )}
+                {polarEnabled
+                  ? `Buy ${selectedPackData?.amount} Credits — ${selectedPackData?.price}`
+                  : `Add ${selectedPackData?.amount} Credits`}
+                {polarEnabled && <ExternalLink className="h-3 w-3 opacity-70" />}
               </>
             )}
           </Button>
         </div>
+
+        {/* Polar payment trust badge */}
+        {polarEnabled && (
+          <p className="text-center text-[10px] text-muted-foreground pt-1">
+            🔒 Secure checkout powered by Polar · Cards, Apple Pay & Google Pay accepted
+          </p>
+        )}
       </DialogContent>
     </Dialog>
   );

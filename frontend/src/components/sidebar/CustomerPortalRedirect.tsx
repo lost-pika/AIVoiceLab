@@ -1,8 +1,8 @@
 "use client";
 
-import { Loader2 } from 'lucide-react';
+import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { authClient } from "~/lib/auth-client";
+import { createCustomerPortalSession } from "~/actions/portal";
 
 export default function CustomerPortalRedirect() {
   const [error, setError] = useState<string | null>(null);
@@ -14,26 +14,22 @@ export default function CustomerPortalRedirect() {
       return;
     }
 
-    const portal = async () => {
-      try {
-        await authClient.customer.portal();
-      } catch (err) {
-        console.error("Customer portal redirect failed:", err);
-        setError("Unable to open the customer portal right now. Please try again later.");
-      }
-    };
-
-    void portal();
+    void createCustomerPortalSession().catch((err) => {
+      console.error("Customer portal redirect failed:", err);
+      setError(
+        "Unable to open the customer portal right now. Please try again later."
+      );
+    });
   }, [portalEnabled]);
 
   if (error) {
     return (
       <div className="flex min-h-[400px] items-center justify-center">
-        <div className="rounded-2xl border border-red-200 bg-red-50 p-6 text-center">
-          <p className="text-base font-semibold text-red-700">{error}</p>
+        <div className="rounded-2xl border border-destructive/30 bg-destructive/5 p-6 text-center max-w-sm">
+          <p className="text-base font-semibold text-destructive">{error}</p>
           <p className="mt-2 text-sm text-muted-foreground">
-            If you believe this is a configuration issue, verify that
-            <span className="font-medium"> NEXT_PUBLIC_POLAR_ENABLED</span> is
+            Verify that{" "}
+            <span className="font-medium">NEXT_PUBLIC_POLAR_ENABLED</span> is
             set to <span className="font-medium">true</span> in production.
           </p>
         </div>
@@ -45,8 +41,8 @@ export default function CustomerPortalRedirect() {
     <div className="flex min-h-[400px] items-center justify-center">
       <div className="flex flex-col items-center gap-4">
         <Loader2 className="text-primary h-8 w-8 animate-spin" />
-        <p className="text-muted-foreground text-sm">
-          Loading your customer portal...
+        <p className="text-muted-foreground text-sm font-medium">
+          Opening your billing portal…
         </p>
       </div>
     </div>
