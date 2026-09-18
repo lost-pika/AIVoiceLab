@@ -59,16 +59,16 @@ export function SignUpForm() {
   };
 
   return (
-    <div className="w-full max-w-[420px] rounded-2xl border border-border/70 bg-card/85 p-7 sm:p-8 shadow-2xl backdrop-blur-xl transition-all">
+    <div className="w-full max-w-sm mx-auto">
       {/* Starter Gift Pill */}
-      <div className="mb-4 inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-400">
+      <div className="mb-3 inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
         <Coins className="h-3.5 w-3.5" />
         <span>20 Free Starter Credits Included</span>
       </div>
 
       {/* Header */}
       <div className="mb-6 space-y-1.5">
-        <h2 className="text-2xl font-bold tracking-tight text-foreground">
+        <h2 className="text-2xl font-extrabold tracking-tight text-foreground">
           Create Account
         </h2>
         <p className="text-xs sm:text-sm text-muted-foreground">
@@ -99,7 +99,7 @@ export function SignUpForm() {
               onChange={(e) => setName(e.target.value)}
               disabled={isLoading}
               required
-              className="w-full rounded-xl border border-border/80 bg-background/70 pl-10 pr-3.5 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all"
+              className="w-full rounded-xl border border-border/80 bg-background/90 pl-10 pr-3.5 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 transition-all"
             />
           </div>
         </div>
@@ -117,7 +117,7 @@ export function SignUpForm() {
               onChange={(e) => setEmail(e.target.value)}
               disabled={isLoading}
               required
-              className="w-full rounded-xl border border-border/80 bg-background/70 pl-10 pr-3.5 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all"
+              className="w-full rounded-xl border border-border/80 bg-background/90 pl-10 pr-3.5 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 transition-all"
             />
           </div>
         </div>
@@ -139,7 +139,7 @@ export function SignUpForm() {
               disabled={isLoading}
               required
               minLength={8}
-              className="w-full rounded-xl border border-border/80 bg-background/70 pl-10 pr-10 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all"
+              className="w-full rounded-xl border border-border/80 bg-background/90 pl-10 pr-10 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 transition-all"
             />
             <button
               type="button"
@@ -177,7 +177,7 @@ export function SignUpForm() {
         Already have an account?{" "}
         <Link
           href="/auth/sign-in"
-          className="font-semibold text-cyan-500 dark:text-cyan-400 hover:underline transition-colors ml-1"
+          className="font-semibold text-cyan-600 dark:text-cyan-400 hover:underline transition-colors ml-1"
         >
           Sign In &rarr;
         </Link>

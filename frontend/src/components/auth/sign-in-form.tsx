@@ -55,14 +55,14 @@ function SignInFormContent() {
   };
 
   return (
-    <div className="w-full max-w-[420px] rounded-2xl border border-border/70 bg-card/85 p-7 sm:p-8 shadow-2xl backdrop-blur-xl transition-all">
+    <div className="w-full max-w-sm mx-auto">
       {/* Header */}
       <div className="mb-6 space-y-1.5">
-        <h2 className="text-2xl font-bold tracking-tight text-foreground">
+        <h2 className="text-2xl font-extrabold tracking-tight text-foreground">
           Welcome Back
         </h2>
         <p className="text-xs sm:text-sm text-muted-foreground">
-          Sign in to access your voices and studio projects
+          Sign in to access your voices and studio workstation
         </p>
       </div>
 
@@ -89,7 +89,7 @@ function SignInFormContent() {
               onChange={(e) => setEmail(e.target.value)}
               disabled={isLoading}
               required
-              className="w-full rounded-xl border border-border/80 bg-background/70 pl-10 pr-3.5 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all"
+              className="w-full rounded-xl border border-border/80 bg-background/90 pl-10 pr-3.5 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 transition-all"
             />
           </div>
         </div>
@@ -109,7 +109,7 @@ function SignInFormContent() {
               onChange={(e) => setPassword(e.target.value)}
               disabled={isLoading}
               required
-              className="w-full rounded-xl border border-border/80 bg-background/70 pl-10 pr-10 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all"
+              className="w-full rounded-xl border border-border/80 bg-background/90 pl-10 pr-10 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 transition-all"
             />
             <button
               type="button"
@@ -147,7 +147,7 @@ function SignInFormContent() {
         Don&apos;t have an account?{" "}
         <Link
           href="/auth/sign-up"
-          className="font-semibold text-cyan-500 dark:text-cyan-400 hover:underline transition-colors ml-1"
+          className="font-semibold text-cyan-600 dark:text-cyan-400 hover:underline transition-colors ml-1"
         >
           Create an account &rarr;
         </Link>
@@ -160,7 +160,7 @@ export function SignInForm() {
   return (
     <Suspense
       fallback={
-        <div className="h-96 w-full max-w-[420px] animate-pulse rounded-2xl border border-border/40 bg-card/50" />
+        <div className="h-64 w-full animate-pulse rounded-2xl border border-border/40 bg-card/50" />
       }
     >
       <SignInFormContent />
