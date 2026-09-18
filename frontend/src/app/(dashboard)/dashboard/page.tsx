@@ -13,7 +13,6 @@ import {
   Play,
   Download,
   Activity,
-  Waves,
   FolderOpen,
 } from "lucide-react";
 import { authClient } from "~/lib/auth-client";
@@ -143,44 +142,6 @@ function DashboardInner() {
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto">
-      {/* Studio Command Center Hero Banner */}
-      <div className="relative overflow-hidden rounded-3xl border border-cyan-500/25 bg-gradient-to-r from-cyan-500/10 via-emerald-500/5 to-card/60 p-6 sm:p-8 backdrop-blur-xl shadow-xl shadow-cyan-500/5">
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-          <div className="space-y-2.5 max-w-2xl">
-            <div className="inline-flex items-center gap-2 rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3.5 py-1 text-xs font-bold text-cyan-400">
-              <Waves className="h-3.5 w-3.5" />
-              <span>Studio Command Center</span>
-            </div>
-            <h1 className="text-3xl font-black tracking-tight text-foreground sm:text-4xl">
-              Welcome back{user?.name ? `, ${user.name}` : ""}!
-            </h1>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              Synthesize natural voiceovers, clone authentic audio personas, and master your media library across 23 languages.
-            </p>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-3">
-            <AddCreditsModal>
-              <Button
-                variant="outline"
-                className="h-10 border-amber-500/30 bg-card/60 hover:border-amber-500/50 hover:bg-amber-500/10 gap-2 text-foreground font-semibold rounded-xl text-xs"
-              >
-                <Coins className="h-4 w-4 text-amber-500" />
-                <span>Add Credits</span>
-              </Button>
-            </AddCreditsModal>
-
-            <Button
-              onClick={() => router.push("/dashboard/create")}
-              className="h-10 px-5 gap-2 rounded-xl bg-gradient-to-r from-cyan-400 to-emerald-400 text-black font-black text-xs uppercase tracking-wider hover:opacity-95 shadow-lg shadow-cyan-500/25"
-            >
-              <Mic className="h-4 w-4 fill-current" />
-              <span>Launch Studio</span>
-              <ArrowRight className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-      </div>
 
       {/* 4 Studio Metric Widgets */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
