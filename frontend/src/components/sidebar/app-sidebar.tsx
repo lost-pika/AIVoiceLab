@@ -8,49 +8,59 @@ import {
   SidebarGroupLabel,
   SidebarMenu,
 } from "../ui/sidebar";
-import { User, Sparkles, Settings } from "lucide-react";
+import { User, Sparkles, Wand2 } from "lucide-react";
 import Link from "next/link";
 import SidebarMenuItems from "./sidebar-menu-items";
 import MobileSidebarClose from "./mobile-sidebar-close";
 import Credits from "./credits";
 import Upgrade from "./upgrade";
+import { ThemeToggle } from "../ui/theme-toggle";
 
 export default function AppSidebar() {
   const polarEnabled = process.env.NEXT_PUBLIC_POLAR_ENABLED === "true";
 
   return (
-    <Sidebar className="from-background to-muted/20 border-r-0 bg-gradient-to-b">
+    <Sidebar className="border-r border-border/50 bg-sidebar/95 backdrop-blur-xl">
       <SidebarContent className="px-3">
         <MobileSidebarClose />
         <SidebarGroup>
-          <SidebarGroupLabel className="text-primary mt-6 mb-8 flex flex-col items-start justify-start px-2">
+          <SidebarGroupLabel className="mt-5 mb-6 flex items-center justify-between px-2">
             <Link
-              href="/"
-              className="mb-1 flex cursor-pointer items-center gap-2"
+              href="/dashboard"
+              className="group flex cursor-pointer items-center gap-2.5"
+              title="Go to Dashboard"
             >
-              <Sparkles className="text-primary h-6 w-6" />
-              <p className="from-primary to-primary/70 bg-gradient-to-r bg-clip-text text-2xl font-bold tracking-tight text-transparent">
-                AI Voice
-              </p>
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-primary via-indigo-600 to-cyan-500 text-white shadow-md shadow-primary/25 transition-transform duration-300 group-hover:scale-105">
+                <Wand2 className="h-4 w-4" />
+              </div>
+              <div className="flex flex-col text-left">
+                <span className="bg-gradient-to-r from-foreground via-foreground to-foreground/70 bg-clip-text text-base font-black tracking-tight text-transparent leading-none">
+                  AI Voice
+                </span>
+                <span className="text-[10px] font-bold tracking-widest text-primary uppercase mt-0.5">
+                  Studio Pro
+                </span>
+              </div>
             </Link>
-            <p className="text-muted-foreground ml-8 text-sm font-medium tracking-wide">
-              Studio
-            </p>
+
+            <ThemeToggle variant="ghost" className="h-7 w-7" />
           </SidebarGroupLabel>
+
           <SidebarGroupContent>
-            <SidebarMenu className="space-y-1">
+            <SidebarMenu className="space-y-1.5">
               <SidebarMenuItems />
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter className="bg-muted/30 border-t p-3">
-        <div className="mb-3 flex w-full items-center justify-center gap-2 text-xs">
-          <Credits />
+
+      <SidebarFooter className="border-t border-border/50 bg-card/30 p-3 space-y-2.5">
+        <Credits />
+        <div className="flex items-center justify-between gap-2">
           <Upgrade />
         </div>
         <UserButton
-          className="border-muted-foreground/20 hover:border-primary/50 w-full transition-colors"
+          className="border-border/60 hover:border-primary/50 w-full transition-colors"
           additionalLinks={
             polarEnabled
               ? [
@@ -59,23 +69,11 @@ export default function AppSidebar() {
                     href: "/dashboard/customer-portal",
                     icon: <User className="h-4 w-4" />,
                   },
-                  {
-                    label: "Settings",
-                    href: "/dashboard/settings",
-                    icon: <Settings className="h-4 w-4" />,
-                  },
                 ]
-              : [
-                  {
-                    label: "Settings",
-                    href: "/dashboard/settings",
-                    icon: <Settings className="h-4 w-4" />,
-                  },
-                ]
+              : []
           }
         />
       </SidebarFooter>
     </Sidebar>
   );
 }
-

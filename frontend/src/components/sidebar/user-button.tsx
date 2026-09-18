@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useAuth } from "~/lib/auth-client";
-import { User, Settings, LogOut, ExternalLink, ChevronUp, Loader2 } from "lucide-react";
+import { User, Settings, LogOut, ExternalLink, ChevronUp, Loader2, Shield } from "lucide-react";
 
 interface UserButtonProps {
   className?: string;
@@ -32,7 +32,7 @@ export function UserButton({ className, additionalLinks = [] }: UserButtonProps)
 
   if (isLoading) {
     return (
-      <div className="flex h-11 w-full items-center justify-center rounded-lg border border-border/40 bg-card/50 p-2">
+      <div className="flex h-11 w-full items-center justify-center rounded-xl border border-border/40 bg-card/50 p-2">
         <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
       </div>
     );
@@ -42,7 +42,7 @@ export function UserButton({ className, additionalLinks = [] }: UserButtonProps)
     return (
       <Link
         href="/auth/sign-in"
-        className="flex h-10 w-full items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
+        className="flex h-10 w-full items-center justify-center rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 transition-all"
       >
         Sign In
       </Link>
@@ -67,16 +67,21 @@ export function UserButton({ className, additionalLinks = [] }: UserButtonProps)
     }
   };
 
+  // Filter out any duplicate settings link
+  const uniqueAdditionalLinks = additionalLinks.filter(
+    (l) => l.href !== "/dashboard/settings"
+  );
+
   return (
     <div className="relative w-full" ref={menuRef}>
       {/* Trigger Button */}
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className={`flex w-full items-center justify-between gap-3 rounded-lg border border-border/50 bg-card/60 p-2 text-left hover:border-primary/40 hover:bg-accent/40 transition-all ${className ?? ""}`}
+        className={`flex w-full items-center justify-between gap-3 rounded-xl border border-border/50 bg-card/60 p-2 text-left hover:border-primary/40 hover:bg-accent/40 transition-all ${className ?? ""}`}
       >
         <div className="flex items-center gap-2.5 overflow-hidden">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-tr from-primary to-cyan-500 text-xs font-bold text-white shadow-xs">
             {initials}
           </div>
           <div className="truncate">
@@ -93,9 +98,14 @@ export function UserButton({ className, additionalLinks = [] }: UserButtonProps)
 
       {/* Popover Dropdown */}
       {isOpen && (
-        <div className="absolute bottom-full left-0 mb-2 w-full min-w-[210px] rounded-xl border border-border/70 bg-popover/95 p-1.5 shadow-xl backdrop-blur-md z-50 animate-in fade-in-0 zoom-in-95">
-          <div className="px-2.5 py-2 border-b border-border/40">
-            <p className="text-xs font-semibold text-foreground truncate">{user.name}</p>
+        <div className="absolute bottom-full left-0 mb-2 w-full min-w-[220px] rounded-2xl border border-border/70 bg-card/95 p-1.5 shadow-2xl backdrop-blur-xl z-50 animate-in fade-in-0 zoom-in-95">
+          <div className="px-3 py-2.5 border-b border-border/40">
+            <div className="flex items-center justify-between mb-0.5">
+              <p className="text-xs font-bold text-foreground truncate">{user.name}</p>
+              <span className="rounded-full bg-primary/10 border border-primary/20 px-1.5 py-0.2 text-[9px] font-semibold text-primary">
+                Free Plan
+              </span>
+            </div>
             <p className="text-[11px] text-muted-foreground truncate">{user.email}</p>
           </div>
 
@@ -109,7 +119,7 @@ export function UserButton({ className, additionalLinks = [] }: UserButtonProps)
               <span>Settings</span>
             </Link>
 
-            {additionalLinks.map((link) => (
+            {uniqueAdditionalLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}

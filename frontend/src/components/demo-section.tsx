@@ -3,27 +3,29 @@
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Card } from "~/components/ui/card";
-import { Play, Pause, Sparkles } from "lucide-react";
+import { Play, Pause, Sparkles, Volume2 } from "lucide-react";
 import Link from "next/link";
+
 export default function DemoSection() {
   const [playingId, setPlayingId] = useState<string | null>(null);
+
   const naturalSpeechSamples = [
     {
       id: "friendly-female",
       text: "Hi there! I'm excited to help you create amazing voice content today.",
-      voiceType: "Friendly Female",
+      voiceType: "Sarah (Friendly Warm)",
       audioUrl: "/audio/friendly-female.wav",
     },
     {
       id: "news-anchor",
       text: "Introducing the next generation of refreshment. Duff Beer just got bolder, smoother, and brewed to perfection.",
-      voiceType: "Stewie Voice Clone",
+      voiceType: "Stewie (Animated Tone)",
       audioUrl: "/audio/duff_stewie.wav",
     },
     {
       id: "conan-protest",
       text: "So I want you to get up now. I want all of you to get up out of your chairs. I want you to go to the window, open it, and stick your head out and yell 'I'M MAD AS HELL!",
-      voiceType: "Conan Voice - Passionate Protest",
+      voiceType: "Conan (Dramatic Force)",
       audioUrl: "/audio/network_conan.wav",
     },
   ];
@@ -31,26 +33,26 @@ export default function DemoSection() {
   const multilingualSamples = [
     {
       id: "hindi",
-      language: "Indian 🇮🇳",
-      text: "नमस्कार! हमारे मंच पर आपका स्वागत है।",
+      language: "Hindi 🇮🇳",
+      text: "नमस्कार! हमारे मंच पर आपका स्वागत है। आपकी आवाज़, आपकी पहचान।",
       audioUrl: "/audio/hindi.wav",
     },
     {
       id: "spanish",
       language: "Spanish 🇪🇸",
-      text: "¡Hola! Bienvenido a nuestra plataforma.",
+      text: "¡Hola! Bienvenido a nuestra plataforma de generación de voz con IA.",
       audioUrl: "/audio/spanish.wav",
     },
     {
       id: "french",
       language: "French 🇫🇷",
-      text: "Bonjour! Bienvenue sur notre plateforme.",
+      text: "Bonjour! Bienvenue sur notre plateforme de synthèse vocale intelligente.",
       audioUrl: "/audio/french.wav",
     },
     {
       id: "japanese",
       language: "Japanese 🇯🇵",
-      text: "こんにちは！私たちのプラットフォームへようこそ。",
+      text: "こんにちは！私たちのAI音声プラットフォームへようこそ。",
       audioUrl: "/audio/japanese.wav",
     },
   ];
@@ -80,9 +82,6 @@ export default function DemoSection() {
         })
         .catch((error) => {
           console.error("Audio playback failed:", error);
-          alert(
-            "Unable to play audio. Please check the audio file or try generating your own speech in the dashboard!",
-          );
         });
 
       audio.onended = () => {
@@ -94,68 +93,75 @@ export default function DemoSection() {
       };
     }
   };
+
   return (
-    <section className="bg-gradient-to-br from-indigo-50/50 to-cyan-50/30 py-20 sm:py-32">
+    <section className="py-20 sm:py-28 border-y border-border/60 bg-muted/20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mx-auto mb-16 max-w-2xl text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-slate-800 sm:text-4xl">
-            Experience the{" "}
-            <span className="bg-gradient-to-r from-indigo-600 to-cyan-600 bg-clip-text text-transparent">
-              Difference
+          <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-semibold text-primary mb-3">
+            <Volume2 className="h-3.5 w-3.5" />
+            <span>Interactive Showcase</span>
+          </div>
+          <h2 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
+            Hear the Quality in{" "}
+            <span className="bg-gradient-to-r from-primary to-purple-500 bg-clip-text text-transparent">
+              Real-Time
             </span>
           </h2>
-          <p className="mt-4 text-lg text-slate-600">
-            Listen to real examples of our AI voice technology in action
+          <p className="mt-3 text-sm sm:text-base text-muted-foreground">
+            Listen to uncompressed sample outputs produced by our neural synthesis engine
           </p>
         </div>
-        <div className="mb-16">
-          <h3 className="mb-6 text-center text-2xl font-semibold text-slate-800">
-            Natural & Expressive Speech
+
+        {/* Natural & Expressive Speech */}
+        <div className="mb-14">
+          <h3 className="mb-4 text-center text-lg font-bold text-foreground flex items-center justify-center gap-2">
+            <span>Natural & Expressive Voice Synthesis</span>
           </h3>
-          <Card className="overflow-hidden border-slate-200">
+          <Card className="overflow-hidden border-border/70 bg-card/70 backdrop-blur-md shadow-md">
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-slate-50">
+                <thead className="bg-muted/40 border-b border-border/60">
                   <tr>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700">
-                      Text Sample
+                    <th className="px-6 py-3.5 text-left text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                      Text Script
                     </th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700">
-                      Voice Type
+                    <th className="px-6 py-3.5 text-left text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                      Voice Persona
                     </th>
-                    <th className="px-6 py-4 text-center text-sm font-semibold text-slate-700">
-                      Audio Output
+                    <th className="px-6 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                      Audio Audition
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-200">
+                <tbody className="divide-y divide-border/40">
                   {naturalSpeechSamples.map((sample) => (
-                    <tr key={sample.id} className="hover:bg-slate-50/50">
-                      <td className="px-6 py-4 text-sm text-slate-600">
+                    <tr key={sample.id} className="hover:bg-muted/30 transition-colors">
+                      <td className="px-6 py-4 text-xs sm:text-sm text-foreground/90 max-w-md">
                         &ldquo;{sample.text}&rdquo;
                       </td>
-                      <td className="px-6 py-4 text-sm font-medium text-slate-700">
-                        {sample.voiceType}
+                      <td className="px-6 py-4 text-xs font-semibold text-foreground whitespace-nowrap">
+                        <span className="rounded-md bg-primary/10 px-2 py-1 text-primary border border-primary/20">
+                          {sample.voiceType}
+                        </span>
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex justify-center">
                           <Button
-                            variant="outline"
+                            variant={playingId === sample.id ? "default" : "outline"}
                             size="sm"
-                            className="gap-2 text-indigo-600 hover:bg-indigo-50 hover:text-indigo-700"
-                            onClick={() =>
-                              handlePlay(sample.id)
-                            }
+                            className="gap-2 h-8 text-xs font-medium"
+                            onClick={() => handlePlay(sample.id)}
                           >
                             {playingId === sample.id ? (
                               <>
-                                <Pause className="h-4 w-4" />
+                                <Pause className="h-3.5 w-3.5 fill-current" />
                                 Pause
                               </>
                             ) : (
                               <>
-                                <Play className="h-4 w-4" />
-                                Play
+                                <Play className="h-3.5 w-3.5 fill-current" />
+                                Play Sample
                               </>
                             )}
                           </Button>
@@ -163,7 +169,7 @@ export default function DemoSection() {
                             <audio
                               id={sample.id}
                               src={sample.audioUrl}
-                              preload="metadata"
+                              preload="none"
                             />
                           )}
                         </div>
@@ -175,55 +181,56 @@ export default function DemoSection() {
             </div>
           </Card>
         </div>
+
         {/* Multilingual Support Demo */}
         <div>
-          <h3 className="mb-6 text-center text-2xl font-semibold text-slate-800">
-            Multilingual Support
+          <h3 className="mb-4 text-center text-lg font-bold text-foreground flex items-center justify-center gap-2">
+            <span>Multilingual Cross-Dialect Support</span>
           </h3>
-          <Card className="overflow-hidden border-slate-200">
+          <Card className="overflow-hidden border-border/70 bg-card/70 backdrop-blur-md shadow-md">
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-slate-50">
+                <thead className="bg-muted/40 border-b border-border/60">
                   <tr>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700">
+                    <th className="px-6 py-3.5 text-left text-xs font-bold uppercase tracking-wider text-muted-foreground">
                       Language
                     </th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700">
-                      Text Sample
+                    <th className="px-6 py-3.5 text-left text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                      Text Script
                     </th>
-                    <th className="px-6 py-4 text-center text-sm font-semibold text-slate-700">
-                      Audio Output
+                    <th className="px-6 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                      Audio Audition
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-200">
+                <tbody className="divide-y divide-border/40">
                   {multilingualSamples.map((sample) => (
-                    <tr key={sample.id} className="hover:bg-slate-50/50">
-                      <td className="px-6 py-4 text-sm font-medium text-slate-700">
-                        {sample.language}
+                    <tr key={sample.id} className="hover:bg-muted/30 transition-colors">
+                      <td className="px-6 py-4 text-xs font-semibold text-foreground whitespace-nowrap">
+                        <span className="rounded-md bg-muted px-2.5 py-1 text-foreground border border-border/60">
+                          {sample.language}
+                        </span>
                       </td>
-                      <td className="px-6 py-4 text-sm text-slate-600">
+                      <td className="px-6 py-4 text-xs sm:text-sm text-foreground/90 max-w-md">
                         &ldquo;{sample.text}&rdquo;
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex justify-center">
                           <Button
-                            variant="outline"
+                            variant={playingId === sample.id ? "default" : "outline"}
                             size="sm"
-                            className="gap-2 text-indigo-600 hover:bg-indigo-50 hover:text-indigo-700"
-                            onClick={() =>
-                              handlePlay(sample.id)
-                            }
+                            className="gap-2 h-8 text-xs font-medium"
+                            onClick={() => handlePlay(sample.id)}
                           >
                             {playingId === sample.id ? (
                               <>
-                                <Pause className="h-4 w-4" />
+                                <Pause className="h-3.5 w-3.5 fill-current" />
                                 Pause
                               </>
                             ) : (
                               <>
-                                <Play className="h-4 w-4" />
-                                Play
+                                <Play className="h-3.5 w-3.5 fill-current" />
+                                Play Sample
                               </>
                             )}
                           </Button>
@@ -231,8 +238,7 @@ export default function DemoSection() {
                             <audio
                               id={sample.id}
                               src={sample.audioUrl}
-                              preload="metadata"
-                              crossOrigin="anonymous"
+                              preload="none"
                             />
                           )}
                         </div>
@@ -244,17 +250,18 @@ export default function DemoSection() {
             </div>
           </Card>
         </div>
+
         <div className="mt-12 text-center">
-          <p className="mb-6 text-slate-600">
-            Ready to create your own AI-generated voices?
+          <p className="mb-4 text-xs text-muted-foreground">
+            Ready to generate high-fidelity speech in your own workflow?
           </p>
           <Link href="/dashboard">
             <Button
               size="lg"
-              className="cursor-pointer gap-2 bg-gradient-to-r from-indigo-500 to-cyan-600 hover:from-indigo-600 hover:to-cyan-700"
+              className="gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-lg shadow-primary/20"
             >
-              <Sparkles className="h-5 w-5" />
-              Try It Free Now
+              <Sparkles className="h-4 w-4" />
+              <span>Launch Studio Free</span>
             </Button>
           </Link>
         </div>

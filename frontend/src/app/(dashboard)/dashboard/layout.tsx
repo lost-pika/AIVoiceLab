@@ -1,6 +1,4 @@
 import "~/styles/globals.css";
-import { Providers } from "~/components/providers";
-import { Toaster } from "~/components/ui/sonner";
 import {
   SidebarInset,
   SidebarProvider,
@@ -13,47 +11,47 @@ import {
   BreadcrumbList,
 } from "~/components/ui/breadcrumb";
 import { type Metadata } from "next";
-import BreadcrumbPageClient from '~/components/sidebar/breadcrumb-page-client';
-import AppSidebar from '~/components/sidebar/app-sidebar';
+import BreadcrumbPageClient from "~/components/sidebar/breadcrumb-page-client";
+import AppSidebar from "~/components/sidebar/app-sidebar";
+import { DashboardHeaderActions } from "~/components/dashboard/dashboard-header-actions";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "AI Voice Studio",
-  description: "AI Voice Studio - Transform text into natural speech",
+  title: "AI Voice Studio | Studio Workstation",
+  description: "AI Voice Studio - Transform text into natural speech with voice cloning",
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
-export default function RootLayout({
+export default function DashboardLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <Providers>
-      <SidebarProvider>
-        <AppSidebar />
-        <SidebarInset className="flex h-screen flex-col">
-          <header className="bg-background/95 supports-[backdrop-filter]:bg-background/60 border-border/40 sticky top-0 z-10 border-b px-6 py-3 shadow-sm backdrop-blur">
-            <div className="flex shrink-0 grow items-center gap-3">
-              <SidebarTrigger className="hover:bg-muted -ml-1 h-8 w-8 transition-colors" />
-              <Separator
-                orientation="vertical"
-                className="mr-2 h-6 data-[orientation=vertical]:h-6"
-              />
-              <Breadcrumb>
-                <BreadcrumbList>
-                  <BreadcrumbItem>
-                    <BreadcrumbPageClient />
-                  </BreadcrumbItem>
-                </BreadcrumbList>
-              </Breadcrumb>
-            </div>
-          </header>
-          <main className="from-background to-muted/20 flex-1 overflow-y-auto bg-gradient-to-br p-6">
-            {children}
-          </main>
-        </SidebarInset>
-      </SidebarProvider>
-      <Toaster />
-    </Providers>
+    <SidebarProvider>
+      <AppSidebar />
+      <SidebarInset className="flex h-screen flex-col bg-background">
+        <header className="sticky top-0 z-20 flex h-14 shrink-0 items-center justify-between border-b border-border/50 bg-background/80 px-4 sm:px-6 backdrop-blur-xl">
+          <div className="flex items-center gap-3">
+            <SidebarTrigger className="hover:bg-accent/70 h-8 w-8 rounded-lg text-muted-foreground hover:text-foreground transition-colors" />
+            <Separator
+              orientation="vertical"
+              className="h-4 bg-border/60"
+            />
+            <Breadcrumb>
+              <BreadcrumbList>
+                <BreadcrumbItem>
+                  <BreadcrumbPageClient />
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
+          </div>
+
+          <DashboardHeaderActions />
+        </header>
+        <main className="flex-1 overflow-y-auto bg-gradient-to-b from-background via-background to-muted/10 p-4 sm:p-6 lg:p-8">
+          {children}
+        </main>
+      </SidebarInset>
+    </SidebarProvider>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { Loader2 } from "lucide-react";
+import { Loader2, Mic2, Sparkles, Volume2 } from "lucide-react";
 import { authClient } from "~/lib/auth-client";
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
@@ -18,7 +18,7 @@ import type {
 } from "~/types/tts";
 import SpeechSettings from "~/components/create/speech-settings";
 import TextInput from "~/components/create/text-input";
-import AudioHistory from '~/components/create/audio-history';
+import AudioHistory from "~/components/create/audio-history";
 
 const LANGUAGES: Language[] = [
   { code: "en", name: "English", flag: "🇺🇸" },
@@ -47,10 +47,10 @@ const LANGUAGES: Language[] = [
 ];
 
 const VOICE_FILES: VoiceFile[] = [
-  { name: "Michael", s3_key: "samples/voices/Michael.wav" },
-  { name: "Sarah (Friendly)", s3_key: "samples/voices/friendly-female.wav" },
-  { name: "Conan", s3_key: "samples/voices/network_conan.wav" },
-  { name: "Stewie", s3_key: "samples/voices/duff_stewie.wav" },
+  { name: "Michael (Professional)", s3_key: "samples/voices/Michael.wav" },
+  { name: "Sarah (Friendly Warm)", s3_key: "samples/voices/friendly-female.wav" },
+  { name: "Conan (Expressive Drama)", s3_key: "samples/voices/network_conan.wav" },
+  { name: "Stewie (Animated Accent)", s3_key: "samples/voices/duff_stewie.wav" },
   { name: "Spanish Native", s3_key: "samples/voices/spanish.wav" },
   { name: "French Native", s3_key: "samples/voices/french.wav" },
   { name: "Japanese Native", s3_key: "samples/voices/japanese.wav" },
@@ -173,7 +173,6 @@ export default function CreatePage() {
 
   const playAudio = (audio: GeneratedAudio) => {
     setCurrentAudio(audio);
-    // Auto-play after setting the audio
     setTimeout(() => {
       if (audioRef.current) {
         audioRef.current.load();
@@ -182,7 +181,7 @@ export default function CreatePage() {
         });
       }
     }, 100);
-    toast.info(`Now playing...`);
+    toast.info("Playing audio preview...");
   };
 
   const downloadAudio = (audio: GeneratedAudio) => {
@@ -217,7 +216,6 @@ export default function CreatePage() {
       }
 
       toast.success("Voice uploaded successfully!");
-
       await fetchUserUploadedVoices();
     } catch (error) {
       console.error("Upload error:", error);
@@ -230,65 +228,87 @@ export default function CreatePage() {
   if (isLoading) {
     return (
       <div className="flex min-h-[400px] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin" />
+        <div className="flex flex-col items-center gap-3">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <p className="text-xs text-muted-foreground">Loading voice studio...</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <>
-      <div className="border-b border-gray-200 bg-white py-2">
-        <div className="mx-auto max-w-7xl text-center">
-          <h1 className="from-primary to-primary/70 mb-1 bg-gradient-to-r bg-clip-text text-lg font-bold text-transparent">
-            Text-to-Speech Generator
-          </h1>
-          <p className="text-muted-foreground mx-auto max-w-xl text-xs">
-            Generate natural-sounding speech in 23 languages with voice
-            cloning
+    <div className="space-y-6 max-w-7xl mx-auto">
+      {/* Studio Header Banner */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-border/60 pb-5">
+        <div>
+          <div className="flex items-center gap-2">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-tr from-primary to-purple-500 text-white shadow-md">
+              <Mic2 className="h-4 w-4" />
+            </div>
+            <h1 className="text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">
+              Voice Studio
+            </h1>
+            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              Live Model
+            </span>
+          </div>
+          <p className="text-xs text-muted-foreground mt-1">
+            Synthesize natural human speech across 23 languages with instant voice cloning and sample auditions
           </p>
         </div>
-      </div>
-      {/* Main Content Area */}
-      <div className="mx-auto max-w-7xl px-2 py-4 sm:px-4 sm:py-6">
-        <div className="grid grid-cols-1 gap-2 sm:gap-4 lg:grid-cols-3">
-          {/* Left Side - Controls (1/3 width) */}
-          <div className="order-2 space-y-2 sm:space-y-3 lg:order-1 lg:col-span-1">
-            <SpeechSettings
-              languages={LANGUAGES}
-              voiceFiles={VOICE_FILES}
-              selectedLanguage={selectedLanguage}
-              setSelectedLanguage={setSelectedLanguage}
-              selectedVoice={selectedVoice}
-              setSelectedVoice={setSelectedVoice}
-              exaggeration={exaggeration}
-              setExaggeration={setExaggeration}
-              cfgWeight={cfgWeight}
-              setCfgWeight={setCfgWeight}
-              userUploadedVoices={userUploadedVoices}
-              isUploadingVoice={isUploadingVoice}
-              handleVoiceUpload={handleVoiceUpload}
-              text={text}
-              isGenerating={isGenerating}
-              onGenerate={generateSpeech}
-            />
-          </div>
-          <div className="order-1 space-y-2 sm:space-y-3 lg:order-2 lg:col-span-2">
-            <TextInput
-              text={text}
-              setText={setText}
-              currentAudio={currentAudio}
-              audioRef={audioRef}
-              onDownload={downloadAudio}
-            />
+
+        <div className="flex items-center gap-2">
+          <div className="rounded-xl border border-border/70 bg-card/60 px-3.5 py-1.5 backdrop-blur-sm text-right">
+            <span className="text-[11px] text-muted-foreground block font-medium">Engine Mode</span>
+            <span className="text-xs font-bold text-foreground">F5-TTS Multi-Voice</span>
           </div>
         </div>
-        <AudioHistory
-          generatedAudios={generatedAudios}
-          languages={LANGUAGES}
-          onPlay={playAudio}
-          onDownload={downloadAudio}
-        />
       </div>
-    </>
+
+      {/* Main Studio Grid */}
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-12 items-start">
+        {/* Left Side - Speech Settings & Voice Selector (5 cols) */}
+        <div className="lg:col-span-5 space-y-4">
+          <SpeechSettings
+            languages={LANGUAGES}
+            voiceFiles={VOICE_FILES}
+            selectedLanguage={selectedLanguage}
+            setSelectedLanguage={setSelectedLanguage}
+            selectedVoice={selectedVoice}
+            setSelectedVoice={setSelectedVoice}
+            exaggeration={exaggeration}
+            setExaggeration={setExaggeration}
+            cfgWeight={cfgWeight}
+            setCfgWeight={setCfgWeight}
+            userUploadedVoices={userUploadedVoices}
+            isUploadingVoice={isUploadingVoice}
+            handleVoiceUpload={handleVoiceUpload}
+            text={text}
+            isGenerating={isGenerating}
+            onGenerate={generateSpeech}
+          />
+        </div>
+
+        {/* Right Side - Script & Real-time Playback (7 cols) */}
+        <div className="lg:col-span-7 space-y-4">
+          <TextInput
+            text={text}
+            setText={setText}
+            currentAudio={currentAudio}
+            audioRef={audioRef}
+            onDownload={downloadAudio}
+          />
+        </div>
+      </div>
+
+      {/* Audio History Section */}
+      <AudioHistory
+        generatedAudios={generatedAudios}
+        languages={LANGUAGES}
+        onPlay={playAudio}
+        onDownload={downloadAudio}
+      />
+    </div>
   );
 }
