@@ -11,44 +11,23 @@ interface ThemeToggleProps {
 }
 
 export function ThemeToggle({ className, variant = "outline" }: ThemeToggleProps) {
-  const { theme, setTheme, resolvedTheme } = useTheme();
-  const [mounted, setMounted] = React.useState(false);
-
-  React.useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
-    return (
-      <Button
-        variant={variant}
-        size="icon"
-        className={`h-8 w-8 rounded-lg border-border/40 bg-card/40 ${className ?? ""}`}
-        disabled
-        aria-label="Toggle theme"
-      >
-        <Sun className="h-4 w-4 opacity-50" />
-      </Button>
-    );
-  }
-
-  const currentTheme = resolvedTheme ?? theme ?? "dark";
-  const isDark = currentTheme === "dark";
+  const { setTheme, resolvedTheme } = useTheme();
 
   return (
     <Button
+      type="button"
       variant={variant}
       size="icon"
-      onClick={() => setTheme(isDark ? "light" : "dark")}
-      className={`h-8 w-8 rounded-lg border-border/50 bg-card/60 hover:bg-accent/60 hover:border-primary/40 transition-all ${className ?? ""}`}
-      title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
+      onClick={() => setTheme(resolvedTheme === "light" ? "dark" : "light")}
+      className={`relative h-8 w-8 rounded-lg border-border/50 bg-card/60 hover:bg-accent/60 hover:border-primary/40 transition-all ${className ?? ""}`}
+      title="Toggle theme"
       aria-label="Toggle theme"
+      suppressHydrationWarning
     >
-      {isDark ? (
-        <Sun className="h-4 w-4 text-amber-400 transition-transform duration-300 hover:rotate-45" />
-      ) : (
-        <Moon className="h-4 w-4 text-indigo-500 transition-transform duration-300 hover:-rotate-12" />
-      )}
+      {/* Light Mode: Moon icon to switch to Dark */}
+      <Moon className="h-4 w-4 text-slate-700 transition-transform duration-200 dark:hidden" />
+      {/* Dark Mode: Sun icon to switch to Light */}
+      <Sun className="h-4 w-4 text-amber-400 transition-transform duration-200 hidden dark:block" />
     </Button>
   );
 }
