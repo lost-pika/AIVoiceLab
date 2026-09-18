@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signInAction } from "~/actions/auth";
 import { Loader2, Eye, EyeOff, AlertCircle } from "lucide-react";
 import { Button } from "~/components/ui/button";
 
-export function SignInForm() {
+function SignInFormContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") ?? "/dashboard";
@@ -142,5 +142,13 @@ export function SignInForm() {
         </Link>
       </div>
     </div>
+  );
+}
+
+export function SignInForm() {
+  return (
+    <Suspense fallback={<div className="h-96 w-full max-w-md animate-pulse rounded-2xl border border-border/40 bg-card/50" />}>
+      <SignInFormContent />
+    </Suspense>
   );
 }
