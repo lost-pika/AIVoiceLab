@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import {
   Lock,
   CreditCard,
@@ -40,6 +41,7 @@ export function MockCheckoutModal({
   pack,
   onSuccess,
 }: MockCheckoutModalProps) {
+  const [mounted, setMounted] = useState(false);
   const [step, setStep] = useState<CheckoutStep>("form");
   const [cardNumber, setCardNumber] = useState(TEST_CARD);
   const [expiry, setExpiry] = useState(TEST_EXPIRY);
@@ -49,14 +51,38 @@ export function MockCheckoutModal({
   const router = useRouter();
 
   useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
     if (isOpen) {
       setStep("form");
       setCardNumber(TEST_CARD);
       setExpiry(TEST_EXPIRY);
       setCvv(TEST_CVV);
       setName("");
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
     }
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, [isOpen]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && step !== "processing") {
+        onClose();
+      }
+    };
+    if (isOpen) {
+      window.addEventListener("keydown", handleKeyDown);
+    }
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isOpen, step, onClose]);
 
   const formatCardNumber = (val: string) => {
     const digits = val.replace(/\D/g, "").slice(0, 16);
@@ -109,16 +135,22 @@ export function MockCheckoutModal({
     toast.success(`Payment successful! +${pack?.amount} credits added.`);
   };
 
-  if (!isOpen || !pack) return null;
+  if (!isOpen || !pack || !mounted) return null;
 
-  return (
+  return createPortal(
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4"
-      style={{ backgroundColor: "rgba(0,0,0,0.75)", backdropFilter: "blur(6px)" }}
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4 overflow-y-auto"
+      style={{ backgroundColor: "rgba(0,0,0,0.8)", backdropFilter: "blur(8px)" }}
+      onClick={(e) => {
+        if (e.target === e.currentTarget && step !== "processing") {
+          onClose();
+        }
+      }}
     >
       <div
-        className="relative w-full max-w-[420px] overflow-hidden rounded-2xl shadow-2xl border border-white/10"
+        className="relative my-auto w-full max-w-[420px] overflow-hidden rounded-2xl shadow-2xl border border-white/10"
         style={{ background: "linear-gradient(135deg, #0f1117 0%, #1a1d2e 100%)" }}
+        onClick={(e) => e.stopPropagation()}
       >
         {/* Demo badge */}
         <div className="absolute top-0 left-0 right-0 flex justify-center z-10">
@@ -287,11 +319,11 @@ export function MockCheckoutModal({
 
         {/* SUCCESS STEP */}
         {step === "success" && (
-          <div className="flex flex-col items-center justify-center py-12 px-6 gap-5">
-            <div className="relative h-24 w-24">
+          <div className="flex flex-col items-center justify-center py-8 px-6 gap-4">
+            <div className="relative h-20 w-20">
               <div className="absolute inset-0 rounded-full bg-emerald-500/10 border-2 border-emerald-500/30 animate-pulse" />
-              <div className="absolute inset-3 rounded-full bg-emerald-500/20 flex items-center justify-center">
-                <CheckCircle2 className="h-10 w-10 text-emerald-400" />
+              <div className="absolute inset-2.5 rounded-full bg-emerald-500/20 flex items-center justify-center">
+                <CheckCircle2 className="h-9 w-9 text-emerald-400" />
               </div>
             </div>
 
@@ -302,7 +334,7 @@ export function MockCheckoutModal({
               </p>
             </div>
 
-            <div className="w-full rounded-xl border border-white/8 bg-white/4 p-4 text-xs space-y-2">
+            <div className="w-full rounded-xl border border-white/8 bg-white/4 p-3.5 text-xs space-y-2">
               <div className="flex justify-between text-white/50">
                 <span>Package</span>
                 <span className="text-white font-medium">{pack.title}</span>
@@ -323,7 +355,7 @@ export function MockCheckoutModal({
 
             <button
               onClick={handleDone}
-              className="w-full rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 py-3 text-sm font-bold text-white shadow-lg shadow-emerald-500/20 hover:from-emerald-400 hover:to-cyan-400 transition-all"
+              className="w-full rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 py-3 text-sm font-bold text-white shadow-lg shadow-emerald-500/20 hover:from-emerald-400 hover:to-cyan-400 transition-all active:scale-[0.98]"
             >
               Continue to Studio →
             </button>
@@ -339,6 +371,7 @@ export function MockCheckoutModal({
           100% { width: 100%; }
         }
       `}</style>
-    </div>
+    </div>,
+    document.body
   );
 }
