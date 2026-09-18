@@ -62,7 +62,6 @@ export default function TextInput({
   const [playbackSpeed, setPlaybackSpeed] = useState<number>(1.0);
 
   const maxChars = 1000;
-  const creditsCost = Math.max(1, Math.ceil(text.length / 100));
   const charPercent = Math.min(100, Math.round((text.length / maxChars) * 100));
 
   const handleCopy = (str: string) => {
@@ -206,9 +205,6 @@ export default function TextInput({
                     <>
                       <Volume2 className="h-3.5 w-3.5" />
                       <span>Generate Speech</span>
-                      <span className="rounded-full bg-black/15 px-1.5 py-0.5 text-[10px] font-bold">
-                        {creditsCost} {creditsCost === 1 ? "cr" : "cr"}
-                      </span>
                     </>
                   )}
                 </Button>
