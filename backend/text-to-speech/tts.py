@@ -11,18 +11,18 @@ from pydantic import BaseModel
 import torch
 import torchaudio
 
-app = modal.App("aws-secret-voice-studio-uploads-123")
+app = modal.App("aws-secret-voice-studio-upload")
 
 image = (
     modal.Image.debian_slim(python_version="3.11")
-    .pip_install("numpy==1.26.0", "torch==2.6.0")
+    .pip_install("numpy==1.26.0")
     .pip_install_from_requirements("requirements.txt")
     .apt_install("ffmpeg")
 )
 
-volume = modal.Volume.from_name("hf-cache-aws-secret-voice-studio-uploads-123", create_if_missing=True)
+volume = modal.Volume.from_name("hf-cache-aws-secret-voice-studio-upload", create_if_missing=True)
 
-s3_secret = modal.Secret.from_name("aws-secret-voice-studio-uploads-123")
+s3_secret = modal.Secret.from_name("aws-secret-voice-studio-upload")
 
 class TextToSpeechRequest(BaseModel):
     text: str
@@ -39,8 +39,8 @@ class TextToSpeechResponse(BaseModel):
     image=image,
     gpu="L40S",
     volumes={
-        "/root/.cache/huppingface": volume,
-        "/s3-mount": modal.CloudBucketMount("aws-secret-voice-studio-uploads-123", secret=s3_secret)
+        "/root/.cache/huggingface": volume,
+        "/s3-mount": modal.CloudBucketMount("voice-studio-upload", secret=s3_secret)
     },
     scaledown_window=120,
     secrets=[s3_secret]

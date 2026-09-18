@@ -22,8 +22,11 @@ interface GenerateSpeechResult {
   error?: string;
 }
 
-const S3_BUCKET_URL =
-  "https://ai-voice-studio-sahand.s3.ap-southeast-2.amazonaws.com";
+const getS3BucketUrl = () => {
+  const bucket = env.AWS_S3_BUCKET_NAME || "voice-studio-upload";
+  const region = env.AWS_REGION || "ap-south-1";
+  return `https://${bucket}.s3.${region}.amazonaws.com`;
+};
 
 const isModalDashboardUrl = (url: string) => {
   try {
@@ -135,7 +138,7 @@ export async function generateSpeech(
 
     const result = (await response.json()) as { s3_Key: string };
 
-    const audioUrl = `${S3_BUCKET_URL}/${result.s3_Key}`;
+    const audioUrl = `${getS3BucketUrl()}/${result.s3_Key}`;
 
     await db.user.update({
       where: { id: session.user.id },
