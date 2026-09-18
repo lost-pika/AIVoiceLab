@@ -160,9 +160,9 @@ export function AccountSettings() {
             </div>
 
             <AddCreditsModal>
-              <Button size="sm" className="gap-1.5 bg-primary hover:bg-primary/90 text-xs font-semibold">
+              <Button size="sm" className="gap-1.5 bg-gradient-to-r from-cyan-400 to-emerald-400 text-black font-bold text-xs rounded-xl shadow-md shadow-cyan-500/20 hover:opacity-95">
                 <Plus className="h-3.5 w-3.5" />
-                Add Credits
+                Top Up Credits
               </Button>
             </AddCreditsModal>
           </div>
@@ -255,7 +255,7 @@ export function AccountSettings() {
               />
             </div>
 
-            <Button type="submit" disabled={profileLoading} size="sm" className="text-xs">
+            <Button type="submit" disabled={profileLoading} size="sm" className="text-xs bg-cyan-400 hover:bg-cyan-300 text-black font-bold rounded-xl">
               {profileLoading ? (
                 <div className="flex items-center gap-1.5">
                   <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -344,7 +344,7 @@ export function AccountSettings() {
               />
             </div>
 
-            <Button type="submit" disabled={passwordLoading} size="sm" className="text-xs">
+            <Button type="submit" disabled={passwordLoading} size="sm" className="text-xs bg-cyan-400 hover:bg-cyan-300 text-black font-bold rounded-xl">
               {passwordLoading ? (
                 <div className="flex items-center gap-1.5">
                   <Loader2 className="h-3.5 w-3.5 animate-spin" />

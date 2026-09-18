@@ -52,11 +52,11 @@ export function DashboardHeaderActions() {
         <Button
           asChild
           size="sm"
-          className="h-8 gap-1.5 rounded-xl bg-gradient-to-r from-primary to-indigo-600 text-white hover:from-primary/90 hover:to-indigo-600/90 shadow-sm shadow-primary/20 text-xs font-semibold px-3 hidden sm:flex"
+          className="h-8 gap-1.5 rounded-xl bg-gradient-to-r from-cyan-400 to-emerald-400 text-black font-bold hover:opacity-95 shadow-md shadow-cyan-500/20 text-xs px-3 hidden sm:flex"
         >
           <Link href="/dashboard/create">
             <Wand2 className="h-3.5 w-3.5" />
-            <span>Create Audio</span>
+            <span>Studio Deck</span>
           </Link>
         </Button>
       )}

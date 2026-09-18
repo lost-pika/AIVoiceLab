@@ -14,11 +14,15 @@ import {
   Mic,
   ShieldCheck,
   Globe2,
+  Waves,
+  Cpu,
+  Radio,
 } from "lucide-react";
 import Link from "next/link";
 import DemoSection from "~/components/demo-section";
 import { getCurrentSession } from "~/lib/session";
 import { ThemeToggle } from "~/components/ui/theme-toggle";
+import { BrandLogo } from "~/components/ui/brand-logo";
 
 export const dynamic = "force-dynamic";
 
@@ -32,32 +36,32 @@ export default async function HomePage() {
       title: "Zero-Shot Voice Cloning",
       description:
         "Clone any voice with just a 5-10 second audio reference. Create custom voice actors instantly.",
-      color: "text-emerald-500",
-      bgColor: "bg-emerald-500/10",
+      color: "text-cyan-400",
+      bgColor: "bg-cyan-500/10 border-cyan-500/20",
     },
     {
       icon: <Expand className="h-6 w-6" />,
       title: "Natural Neural Synthesis",
       description:
         "Convert text to speech with lifelike emotion, cadence, pause detection, and natural-sounding human warmth.",
-      color: "text-blue-500",
-      bgColor: "bg-blue-500/10",
+      color: "text-emerald-400",
+      bgColor: "bg-emerald-500/10 border-emerald-500/20",
     },
     {
       icon: <Target className="h-6 w-6" />,
-      title: "23 Global Languages",
+      title: "23 Global Dialects",
       description:
         "Cross-lingual voice synthesis supporting English, Hindi, Spanish, French, Japanese, German, and more.",
-      color: "text-purple-500",
-      bgColor: "bg-purple-500/10",
+      color: "text-purple-400",
+      bgColor: "bg-purple-500/10 border-purple-500/20",
     },
     {
       icon: <Zap className="h-6 w-6" />,
       title: "GPU Cloud Acceleration",
       description:
         "Cloud-accelerated inference powered by Modal and AWS S3 gives you studio-grade audio rendered in seconds.",
-      color: "text-amber-500",
-      bgColor: "bg-amber-500/10",
+      color: "text-amber-400",
+      bgColor: "bg-amber-500/10 border-amber-500/20",
     },
   ];
 
@@ -66,21 +70,21 @@ export default async function HomePage() {
       name: "Sarah Chen",
       role: "Voice Actor & Producer",
       content:
-        "AI Voice Studio has revolutionized our audio workflows. What used to take hours of studio recording now takes minutes.",
+        "VoxiCraft Studio has revolutionized our audio workflows. What used to take hours of studio recording now takes seconds with unbelievable fidelity.",
       rating: 5,
     },
     {
       name: "Marcus Johnson",
       role: "Podcast Host",
       content:
-        "The voice clone fidelity is astounding. The pacing and intonation match my voice naturally without feeling robotic.",
+        "The voice clone fidelity is astounding. The pacing, breathing pauses, and intonation match natural speech without feeling robotic.",
       rating: 5,
     },
     {
       name: "Emma Rodriguez",
       role: "Content Creator",
       content:
-        "I can translate and narrate my videos in Spanish, Hindi, and French while preserving my own vocal identity. Game changer!",
+        "I can translate and narrate my videos in Spanish, Hindi, and French while preserving authentic emotion. Absolute game changer!",
       rating: 5,
     },
   ];
@@ -88,75 +92,76 @@ export default async function HomePage() {
   const pricingFeatures = [
     "Zero-shot Voice Cloning from Audio File",
     "Natural Speech Synthesis in 23 Languages",
-    "Instant Voice Audition & Previews",
-    "High-Fidelity Uncompressed WAV Exports",
-    "Cloud Audio Storage & Project History",
-    "Fast GPU Cloud Infrastructure",
+    "Instant In-Card Voice Auditions",
+    "Studio Master 48kHz WAV Exports",
+    "Cloud Audio Storage & Media Vault",
+    "Dedicated Cloud GPU Acceleration",
   ];
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      {/* Top Navigation */}
-      <nav className="sticky top-0 z-50 border-b border-border/60 bg-background/85 backdrop-blur-md">
+    <div className="min-h-screen bg-background text-foreground studio-grid-bg">
+      {/* Top Studio Navbar */}
+      <nav className="sticky top-0 z-50 border-b border-border/60 bg-background/90 backdrop-blur-xl">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between">
-            {/* Logo */}
-            <Link href={isLoggedIn ? "/dashboard" : "/"} className="flex items-center gap-2.5">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-primary to-purple-500 text-white shadow-md">
-                <Sparkles className="h-5 w-5" />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-base font-extrabold tracking-tight text-foreground">
-                  AI Voice Studio
-                </span>
-                <span className="text-[10px] text-muted-foreground font-medium -mt-1">
-                  Neural Audio Lab
-                </span>
-              </div>
-            </Link>
+            <BrandLogo href={isLoggedIn ? "/dashboard" : "/"} size="md" />
 
-            {/* Nav links */}
             <div className="hidden items-center space-x-8 md:flex">
               <a
                 href="#features"
-                className="text-xs font-semibold text-muted-foreground transition-colors hover:text-foreground"
+                className="text-xs font-bold uppercase tracking-wider text-muted-foreground transition-colors hover:text-cyan-400"
               >
                 Features
               </a>
               <a
+                href="#demo"
+                className="text-xs font-bold uppercase tracking-wider text-muted-foreground transition-colors hover:text-cyan-400"
+              >
+                Auditions
+              </a>
+              <a
                 href="#pricing"
-                className="text-xs font-semibold text-muted-foreground transition-colors hover:text-foreground"
+                className="text-xs font-bold uppercase tracking-wider text-muted-foreground transition-colors hover:text-cyan-400"
               >
                 Pricing
               </a>
               <a
-                href="#testimonials"
-                className="text-xs font-semibold text-muted-foreground transition-colors hover:text-foreground"
+                href="#reviews"
+                className="text-xs font-bold uppercase tracking-wider text-muted-foreground transition-colors hover:text-cyan-400"
               >
                 Reviews
               </a>
             </div>
 
-            {/* Auth CTA & Theme Toggle */}
-            <div className="flex items-center gap-2.5">
+            <div className="flex items-center gap-3">
               <ThemeToggle />
 
               {isLoggedIn ? (
                 <Link href="/dashboard">
-                  <Button size="sm" className="gap-2 text-xs font-semibold bg-primary hover:bg-primary/90 text-primary-foreground shadow-md">
-                    <span>Studio Dashboard</span>
+                  <Button
+                    size="sm"
+                    className="gap-2 text-xs font-black rounded-xl bg-gradient-to-r from-cyan-400 to-emerald-400 text-black shadow-md shadow-cyan-500/20 hover:opacity-95"
+                  >
+                    <span>Open Studio</span>
                     <ArrowRight className="h-3.5 w-3.5" />
                   </Button>
                 </Link>
               ) : (
                 <>
                   <Link href="/auth/sign-in">
-                    <Button variant="ghost" size="sm" className="text-xs font-semibold">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-xs font-bold text-muted-foreground hover:text-foreground"
+                    >
                       Sign In
                     </Button>
                   </Link>
                   <Link href="/auth/sign-up">
-                    <Button size="sm" className="gap-1.5 text-xs font-semibold bg-primary hover:bg-primary/90 text-primary-foreground shadow-md">
+                    <Button
+                      size="sm"
+                      className="gap-1.5 text-xs font-black rounded-xl bg-gradient-to-r from-cyan-400 to-emerald-400 text-black shadow-md shadow-cyan-500/20 hover:opacity-95"
+                    >
                       <span>Get Started</span>
                       <ArrowRight className="h-3.5 w-3.5" />
                     </Button>
@@ -170,34 +175,35 @@ export default async function HomePage() {
 
       {/* Hero Section */}
       <section className="relative overflow-hidden py-20 sm:py-32">
-        <div className="absolute inset-0 -z-10 bg-[radial-gradient(45%_50%_at_50%_20%,var(--color-primary)/15,transparent_100%)] pointer-events-none" />
+        <div className="absolute inset-0 -z-10 bg-[radial-gradient(40%_50%_at_50%_15%,rgba(6,182,212,0.15),transparent_100%)] pointer-events-none" />
 
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-3xl text-center">
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-xs font-semibold text-primary">
-              <Sparkles className="h-3.5 w-3.5" />
-              <span>State-of-the-Art F5-TTS Neural Architecture</span>
+            {/* Engine Pill */}
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-cyan-400/30 bg-cyan-400/10 px-4 py-1.5 text-xs font-bold text-cyan-400">
+              <Cpu className="h-3.5 w-3.5" />
+              <span>Next-Gen F5-TTS Neural Workstation</span>
             </div>
 
-            <h1 className="mb-6 text-4xl font-black tracking-tight text-foreground sm:text-6xl leading-[1.1]">
+            <h1 className="mb-6 text-4xl font-black tracking-tight text-foreground sm:text-6xl leading-[1.08]">
               Transform Any Script into{" "}
-              <span className="bg-gradient-to-r from-primary via-purple-500 to-indigo-500 bg-clip-text text-transparent">
-                Lifelike Human Voice
+              <span className="bg-gradient-to-r from-cyan-400 via-teal-300 to-emerald-400 bg-clip-text text-transparent">
+                Living Human Voice
               </span>
             </h1>
 
-            <p className="mx-auto mb-10 max-w-2xl text-base text-muted-foreground sm:text-lg leading-relaxed">
-              Professional voice cloning and multi-lingual speech synthesis. Create authentic podcasts, video voiceovers, and dynamic audiobooks in 23 languages within seconds.
+            <p className="mx-auto mb-10 max-w-2xl text-sm sm:text-base text-muted-foreground leading-relaxed">
+              Professional zero-shot voice cloning and expressive multilingual speech synthesis. Produce broadcast-quality voiceovers, podcasts, and audiobooks in 23 languages within seconds.
             </p>
 
             <div className="flex flex-col gap-3.5 sm:flex-row sm:justify-center">
               <Link href={isLoggedIn ? "/dashboard/create" : "/auth/sign-up"}>
                 <Button
                   size="lg"
-                  className="h-12 w-full sm:w-auto px-8 gap-2 text-sm font-bold bg-primary hover:bg-primary/90 text-primary-foreground shadow-xl shadow-primary/20"
+                  className="h-12 w-full sm:w-auto px-8 gap-2 text-xs uppercase tracking-wider font-black rounded-xl bg-gradient-to-r from-cyan-400 to-emerald-400 text-black shadow-xl shadow-cyan-500/25 hover:opacity-95"
                 >
-                  <Mic className="h-4 w-4" />
-                  <span>Start Creating Free</span>
+                  <Mic className="h-4 w-4 fill-current" />
+                  <span>Launch Studio Free</span>
                   <ArrowRight className="h-4 w-4" />
                 </Button>
               </Link>
@@ -206,57 +212,56 @@ export default async function HomePage() {
                 <Button
                   variant="outline"
                   size="lg"
-                  className="h-12 w-full sm:w-auto px-6 gap-2 text-sm font-semibold border-border/80 bg-background/60 hover:bg-muted"
+                  className="h-12 w-full sm:w-auto px-6 gap-2 text-xs uppercase tracking-wider font-bold rounded-xl border-border/80 bg-background/60 hover:bg-muted"
                 >
-                  <Play className="h-4 w-4 fill-current text-primary" />
-                  <span>{isLoggedIn ? "Open Dashboard" : "Sign In to Studio"}</span>
+                  <Radio className="h-4 w-4 text-cyan-400" />
+                  <span>{isLoggedIn ? "Open Command Center" : "Sign In to Studio"}</span>
                 </Button>
               </Link>
             </div>
           </div>
 
-          {/* Social Proof Stats */}
+          {/* Social Proof Stats Matrix */}
           <div className="mt-16 text-center">
-            <p className="mb-6 text-xs uppercase tracking-widest text-muted-foreground font-semibold">
-              Powering modern creators and audio engineers worldwide
-            </p>
-            <div className="grid grid-cols-2 gap-6 sm:grid-cols-4 max-w-4xl mx-auto">
-              <div className="rounded-xl border border-border/60 bg-card/40 p-4 backdrop-blur-sm">
-                <div className="text-2xl sm:text-3xl font-black text-foreground">23</div>
-                <div className="text-xs text-muted-foreground mt-0.5">Global Languages</div>
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 max-w-4xl mx-auto">
+              <div className="rounded-2xl border border-border/60 bg-card/60 p-4 backdrop-blur-sm hover:border-cyan-400/40 transition-colors">
+                <div className="text-2xl sm:text-3xl font-black text-cyan-400">23</div>
+                <div className="text-xs text-muted-foreground mt-0.5 font-medium">Global Languages</div>
               </div>
-              <div className="rounded-xl border border-border/60 bg-card/40 p-4 backdrop-blur-sm">
-                <div className="text-2xl sm:text-3xl font-black text-foreground">&lt; 5s</div>
-                <div className="text-xs text-muted-foreground mt-0.5">Voice Cloning Reference</div>
+              <div className="rounded-2xl border border-border/60 bg-card/60 p-4 backdrop-blur-sm hover:border-emerald-400/40 transition-colors">
+                <div className="text-2xl sm:text-3xl font-black text-emerald-400">&lt; 5s</div>
+                <div className="text-xs text-muted-foreground mt-0.5 font-medium">Cloning Audio Sample</div>
               </div>
-              <div className="rounded-xl border border-border/60 bg-card/40 p-4 backdrop-blur-sm">
-                <div className="text-2xl sm:text-3xl font-black text-foreground">100%</div>
-                <div className="text-xs text-muted-foreground mt-0.5">S3 Cloud Audio Storage</div>
+              <div className="rounded-2xl border border-border/60 bg-card/60 p-4 backdrop-blur-sm hover:border-purple-400/40 transition-colors">
+                <div className="text-2xl sm:text-3xl font-black text-purple-400">48kHz</div>
+                <div className="text-xs text-muted-foreground mt-0.5 font-medium">Master WAV Audio</div>
               </div>
-              <div className="rounded-xl border border-border/60 bg-card/40 p-4 backdrop-blur-sm">
-                <div className="text-2xl sm:text-3xl font-black text-amber-500">4.9 ★</div>
-                <div className="text-xs text-muted-foreground mt-0.5">Studio Audio Quality</div>
+              <div className="rounded-2xl border border-border/60 bg-card/60 p-4 backdrop-blur-sm hover:border-amber-400/40 transition-colors">
+                <div className="text-2xl sm:text-3xl font-black text-amber-400">4.9 ★</div>
+                <div className="text-xs text-muted-foreground mt-0.5 font-medium">Studio Quality Rating</div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Interactive Audio Demos */}
-      <DemoSection />
+      {/* Interactive Audio Demos Showcase */}
+      <div id="demo">
+        <DemoSection />
+      </div>
 
-      {/* Features Section */}
+      {/* Features Grid */}
       <section id="features" className="py-20 sm:py-32">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto mb-16 max-w-2xl text-center">
-            <h2 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
+            <h2 className="text-3xl font-black tracking-tight text-foreground sm:text-4xl">
               Engineered for Professional{" "}
-              <span className="bg-gradient-to-r from-primary to-purple-500 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-cyan-400 to-emerald-400 bg-clip-text text-transparent">
                 Audio Precision
               </span>
             </h2>
-            <p className="mt-3 text-sm sm:text-base text-muted-foreground">
-              Everything you need to produce broadcast-ready voice media without recording studios
+            <p className="mt-3 text-sm text-muted-foreground">
+              Everything you need to produce broadcast-ready voice media without expensive recording studios
             </p>
           </div>
 
@@ -264,11 +269,11 @@ export default async function HomePage() {
             {features.map((feature, index) => (
               <Card
                 key={index}
-                className="border-border/60 bg-card/50 backdrop-blur-sm transition-all hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg"
+                className="border-border/60 bg-card/60 backdrop-blur-sm transition-all hover:-translate-y-1 hover:border-cyan-400/40 hover:shadow-xl hover:shadow-cyan-500/5 rounded-2xl"
               >
                 <CardContent className="p-6">
                   <div
-                    className={`${feature.bgColor} mb-4 inline-flex items-center justify-center rounded-xl p-3 ${feature.color}`}
+                    className={`${feature.bgColor} mb-4 inline-flex items-center justify-center rounded-xl p-3 ${feature.color} border`}
                   >
                     {feature.icon}
                   </div>
@@ -285,15 +290,15 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Testimonials */}
-      <section id="testimonials" className="py-20 sm:py-32 border-t border-border/60 bg-muted/20">
+      {/* Reviews */}
+      <section id="reviews" className="py-20 sm:py-32 border-t border-border/60 bg-muted/10">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto mb-16 max-w-2xl text-center">
-            <h2 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
-              Loved by Creators & Teams
+            <h2 className="text-3xl font-black tracking-tight text-foreground sm:text-4xl">
+              Loved by Audio Engineers & Creators
             </h2>
-            <p className="mt-3 text-sm sm:text-base text-muted-foreground">
-              What creative professionals are saying about their AI Voice Studio experience
+            <p className="mt-3 text-sm text-muted-foreground">
+              What voice professionals are saying about their VoxiCraft Studio experience
             </p>
           </div>
 
@@ -301,7 +306,7 @@ export default async function HomePage() {
             {testimonials.map((testimonial, index) => (
               <Card
                 key={index}
-                className="border-border/60 bg-card/50 backdrop-blur-sm p-6 flex flex-col justify-between"
+                className="border-border/60 bg-card/60 backdrop-blur-sm p-6 flex flex-col justify-between rounded-2xl"
               >
                 <div>
                   <div className="mb-3 flex items-center gap-1">
@@ -336,39 +341,39 @@ export default async function HomePage() {
       <section id="pricing" className="py-20 sm:py-32 border-t border-border/60">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto mb-16 max-w-2xl text-center">
-            <h2 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
+            <h2 className="text-3xl font-black tracking-tight text-foreground sm:text-4xl">
               Simple Credit-Based Pricing
             </h2>
-            <p className="mt-3 text-sm sm:text-base text-muted-foreground">
-              Sign up today and get 10 free generations instantly. Top up credits whenever you need.
+            <p className="mt-3 text-sm text-muted-foreground">
+              Claim 10 free generations upon sign up. Top up anytime directly from your studio deck.
             </p>
           </div>
 
           <div className="mx-auto max-w-md">
-            <Card className="relative overflow-hidden border-2 border-primary/40 bg-card/70 backdrop-blur-md shadow-xl">
-              <div className="absolute top-0 right-0 bg-primary px-3.5 py-1 text-[11px] font-bold text-primary-foreground rounded-bl-lg">
-                Included with Free Account
+            <Card className="relative overflow-hidden border-2 border-cyan-400/40 bg-card/80 backdrop-blur-md shadow-2xl rounded-3xl">
+              <div className="absolute top-0 right-0 bg-gradient-to-r from-cyan-400 to-emerald-400 px-3.5 py-1 text-[11px] font-black text-black rounded-bl-xl uppercase tracking-wider">
+                Free Starter Account
               </div>
               <CardContent className="p-8">
                 <div className="mb-6 text-center">
                   <h3 className="text-xl font-bold text-foreground">
-                    Creator Starter
+                    Creator Studio
                   </h3>
                   <div className="mt-4 flex items-baseline justify-center">
                     <span className="text-4xl font-black text-foreground">
                       $0
                     </span>
-                    <span className="ml-2 text-xs text-muted-foreground font-semibold">to get started</span>
+                    <span className="ml-2 text-xs text-muted-foreground font-semibold">to begin</span>
                   </div>
                   <p className="mt-2 text-xs text-muted-foreground">
-                    Full access to all 23 languages and voice cloning
+                    Instant access to all 23 languages and custom voice cloning
                   </p>
                 </div>
 
                 <ul className="mb-8 space-y-3">
                   {pricingFeatures.map((feature, index) => (
-                    <li key={index} className="flex items-center gap-2.5 text-xs text-foreground">
-                      <CheckCircle2 className="h-4 w-4 flex-shrink-0 text-emerald-500" />
+                    <li key={index} className="flex items-center gap-2.5 text-xs text-foreground font-medium">
+                      <CheckCircle2 className="h-4 w-4 flex-shrink-0 text-emerald-400" />
                       <span>{feature}</span>
                     </li>
                   ))}
@@ -376,15 +381,15 @@ export default async function HomePage() {
 
                 <Link href={isLoggedIn ? "/dashboard" : "/auth/sign-up"}>
                   <Button
-                    className="w-full gap-2 text-xs font-bold bg-primary hover:bg-primary/90 text-primary-foreground shadow-md"
+                    className="w-full gap-2 text-xs uppercase tracking-wider font-black rounded-xl bg-gradient-to-r from-cyan-400 to-emerald-400 text-black shadow-lg shadow-cyan-500/25 hover:opacity-95"
                     size="lg"
                   >
                     <Sparkles className="h-4 w-4" />
-                    <span>{isLoggedIn ? "Open Dashboard" : "Claim Free Account & 10 Credits"}</span>
+                    <span>{isLoggedIn ? "Open Command Center" : "Claim Free Account & 10 Credits"}</span>
                   </Button>
                 </Link>
                 <p className="mt-3 text-center text-[11px] text-muted-foreground">
-                  No credit card required • Top-up anytime from your dashboard
+                  No credit card required • Refill credits anytime from your studio deck
                 </p>
               </CardContent>
             </Card>
@@ -396,28 +401,24 @@ export default async function HomePage() {
       <footer className="border-t border-border/60 bg-muted/20 py-12">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-2">
-              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary text-white">
-                <Sparkles className="h-4 w-4" />
-              </div>
-              <span className="text-sm font-bold text-foreground">
-                AI Voice Studio
-              </span>
-            </div>
+            <BrandLogo size="sm" />
 
-            <p className="text-xs text-muted-foreground">
-              &copy; {new Date().getFullYear()} AI Voice Studio. All rights reserved.
+            <p className="text-xs text-muted-foreground font-medium">
+              &copy; {new Date().getFullYear()} VoxiCraft Studio. All rights reserved.
             </p>
 
-            <div className="flex items-center space-x-6 text-xs text-muted-foreground">
-              <Link href="/dashboard" className="hover:text-foreground transition-colors">
+            <div className="flex items-center space-x-6 text-xs text-muted-foreground font-medium">
+              <Link href="/dashboard" className="hover:text-cyan-400 transition-colors">
                 Dashboard
               </Link>
-              <Link href="/dashboard/create" className="hover:text-foreground transition-colors">
-                Voice Studio
+              <Link href="/dashboard/create" className="hover:text-cyan-400 transition-colors">
+                Voice Deck
               </Link>
-              <Link href="/dashboard/settings" className="hover:text-foreground transition-colors">
-                Account Settings
+              <Link href="/dashboard/projects" className="hover:text-cyan-400 transition-colors">
+                Media Vault
+              </Link>
+              <Link href="/dashboard/settings" className="hover:text-cyan-400 transition-colors">
+                Settings
               </Link>
             </div>
           </div>

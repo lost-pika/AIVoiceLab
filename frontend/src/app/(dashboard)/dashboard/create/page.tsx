@@ -1,6 +1,6 @@
 "use client";
 
-import { Loader2, Mic2, Sparkles, Volume2 } from "lucide-react";
+import { Loader2, Mic2, Sparkles, Volume2, Cpu, Waves } from "lucide-react";
 import { authClient } from "~/lib/auth-client";
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
@@ -49,8 +49,8 @@ const LANGUAGES: Language[] = [
 const VOICE_FILES: VoiceFile[] = [
   { name: "Michael (Professional)", s3_key: "samples/voices/Michael.wav" },
   { name: "Sarah (Friendly Warm)", s3_key: "samples/voices/friendly-female.wav" },
-  { name: "Conan (Expressive Drama)", s3_key: "samples/voices/network_conan.wav" },
-  { name: "Stewie (Animated Accent)", s3_key: "samples/voices/duff_stewie.wav" },
+  { name: "Conan (Cinematic Drama)", s3_key: "samples/voices/network_conan.wav" },
+  { name: "Stewie (Animated Tone)", s3_key: "samples/voices/duff_stewie.wav" },
   { name: "Spanish Native", s3_key: "samples/voices/spanish.wav" },
   { name: "French Native", s3_key: "samples/voices/french.wav" },
   { name: "Japanese Native", s3_key: "samples/voices/japanese.wav" },
@@ -121,7 +121,7 @@ export default function CreatePage() {
 
   const generateSpeech = async () => {
     if (!text.trim()) {
-      toast.error("Please enter some text!");
+      toast.error("Please enter some script text first!");
       return;
     }
     setIsGenerating(true);
@@ -160,7 +160,7 @@ export default function CreatePage() {
         }
       }, 100);
 
-      toast.success("Speech generated successfully!");
+      toast.success("Speech synthesized successfully!");
     } catch (error) {
       console.error("Generation error:", error);
       const errorMessage =
@@ -181,7 +181,7 @@ export default function CreatePage() {
         });
       }
     }, 100);
-    toast.info("Playing audio preview...");
+    toast.info("Auditioning track...");
   };
 
   const downloadAudio = (audio: GeneratedAudio) => {
@@ -215,7 +215,7 @@ export default function CreatePage() {
         throw new Error(result.error ?? "Upload failed");
       }
 
-      toast.success("Voice uploaded successfully!");
+      toast.success("Voice uploaded and indexed!");
       await fetchUserUploadedVoices();
     } catch (error) {
       console.error("Upload error:", error);
@@ -229,8 +229,8 @@ export default function CreatePage() {
     return (
       <div className="flex min-h-[400px] items-center justify-center">
         <div className="flex flex-col items-center gap-3">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          <p className="text-xs text-muted-foreground">Loading voice studio...</p>
+          <Loader2 className="h-8 w-8 animate-spin text-cyan-400" />
+          <p className="text-xs text-muted-foreground">Initializing Neural Audio Workstation...</p>
         </div>
       </div>
     );
@@ -238,37 +238,42 @@ export default function CreatePage() {
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
-      {/* Studio Header Banner */}
+      {/* Studio Header Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-border/60 pb-5">
         <div>
-          <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-tr from-primary to-purple-500 text-white shadow-md">
-              <Mic2 className="h-4 w-4" />
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-400 to-emerald-400 text-black shadow-md shadow-cyan-500/20 font-black">
+              <Waves className="h-4 w-4" />
             </div>
-            <h1 className="text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">
-              Voice Studio
+            <h1 className="text-2xl font-black tracking-tight text-foreground sm:text-3xl">
+              Audio Synthesis Deck
             </h1>
-            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-              Live Model
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-xs font-bold text-emerald-400 border border-emerald-500/30">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              Live Engine
             </span>
           </div>
           <p className="text-xs text-muted-foreground mt-1">
-            Synthesize natural human speech across 23 languages with instant voice cloning and sample auditions
+            Zero-shot voice cloning and multilingual speech synthesis across 23 global languages
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
-          <div className="rounded-xl border border-border/70 bg-card/60 px-3.5 py-1.5 backdrop-blur-sm text-right">
-            <span className="text-[11px] text-muted-foreground block font-medium">Engine Mode</span>
+        {/* Hardware Status Strip */}
+        <div className="flex items-center gap-2 self-start sm:self-auto">
+          <div className="rounded-xl border border-cyan-500/20 bg-cyan-500/5 px-3 py-1.5 text-right backdrop-blur-sm">
+            <div className="flex items-center gap-1.5 justify-end">
+              <Cpu className="h-3 w-3 text-cyan-400" />
+              <span className="text-[10px] uppercase font-bold tracking-wider text-cyan-400">
+                GPU Inference
+              </span>
+            </div>
             <span className="text-xs font-bold text-foreground">F5-TTS Multi-Voice</span>
           </div>
         </div>
       </div>
 
-      {/* Main Studio Grid */}
+      {/* Main Studio Deck Layout (Voice Selector 5 cols, Teleprompter & Master 7 cols) */}
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-12 items-start">
-        {/* Left Side - Speech Settings & Voice Selector (5 cols) */}
         <div className="lg:col-span-5 space-y-4">
           <SpeechSettings
             languages={LANGUAGES}
@@ -290,7 +295,6 @@ export default function CreatePage() {
           />
         </div>
 
-        {/* Right Side - Script & Real-time Playback (7 cols) */}
         <div className="lg:col-span-7 space-y-4">
           <TextInput
             text={text}
@@ -302,7 +306,7 @@ export default function CreatePage() {
         </div>
       </div>
 
-      {/* Audio History Section */}
+      {/* Session Master Tape Reel */}
       <AudioHistory
         generatedAudios={generatedAudios}
         languages={LANGUAGES}

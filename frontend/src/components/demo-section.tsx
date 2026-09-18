@@ -102,9 +102,9 @@ export default function DemoSection() {
             <Volume2 className="h-3.5 w-3.5" />
             <span>Interactive Showcase</span>
           </div>
-          <h2 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
+          <h2 className="text-3xl font-black tracking-tight text-foreground sm:text-4xl">
             Hear the Quality in{" "}
-            <span className="bg-gradient-to-r from-primary to-purple-500 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-cyan-400 to-emerald-400 bg-clip-text text-transparent">
               Real-Time
             </span>
           </h2>
@@ -258,7 +258,7 @@ export default function DemoSection() {
           <Link href="/dashboard">
             <Button
               size="lg"
-              className="gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-lg shadow-primary/20"
+              className="gap-2 rounded-xl bg-gradient-to-r from-cyan-400 to-emerald-400 text-black font-black text-xs uppercase tracking-wider shadow-lg shadow-cyan-500/25 hover:opacity-95"
             >
               <Sparkles className="h-4 w-4" />
               <span>Launch Studio Free</span>
