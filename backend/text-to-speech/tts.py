@@ -58,16 +58,22 @@ class TextToSpeachServer:
             if request.voice_s3_key:
                 audio_prompt_path = f"/s3-mount/{request.voice_s3_key}"
 
-                if not os.path.exists(audio_prompt_path):
-                    raise FileNotFoundError(
-                        f"Prompt audio not found at {audio_prompt_path}")
-                wav = self.model.generate(
-                    request.text, 
-                    audio_prompt_path=audio_prompt_path,
-                    language_id=request.language,
-                    exaggeration=request.exaggeration,
-                    cfg_weight=request.cfg_weight
-                )
+                if os.path.exists(audio_prompt_path):
+                    wav = self.model.generate(
+                        request.text, 
+                        audio_prompt_path=audio_prompt_path,
+                        language_id=request.language,
+                        exaggeration=request.exaggeration,
+                        cfg_weight=request.cfg_weight
+                    )
+                else:
+                    print(f"Warning: Prompt audio not found at {audio_prompt_path}, falling back to default voice.")
+                    wav = self.model.generate(
+                        request.text,
+                        language_id=request.language,
+                        exaggeration=request.exaggeration,
+                        cfg_weight=request.cfg_weight
+                    )
             else:
                 wav = self.model.generate(
                     request.text,

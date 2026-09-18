@@ -48,6 +48,13 @@ const LANGUAGES: Language[] = [
 
 const VOICE_FILES: VoiceFile[] = [
   { name: "Michael", s3_key: "samples/voices/Michael.wav" },
+  { name: "Sarah (Friendly)", s3_key: "samples/voices/friendly-female.wav" },
+  { name: "Conan", s3_key: "samples/voices/network_conan.wav" },
+  { name: "Stewie", s3_key: "samples/voices/duff_stewie.wav" },
+  { name: "Spanish Native", s3_key: "samples/voices/spanish.wav" },
+  { name: "French Native", s3_key: "samples/voices/french.wav" },
+  { name: "Japanese Native", s3_key: "samples/voices/japanese.wav" },
+  { name: "Hindi Native", s3_key: "samples/voices/hindi.wav" },
 ];
 
 export default function CreatePage() {
