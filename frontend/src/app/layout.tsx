@@ -1,8 +1,15 @@
 import "~/styles/globals.css";
 
 import { type Metadata } from "next";
+import { Inter } from "next/font/google";
 import { Toaster } from "~/components/ui/sonner";
 import { Providers } from "~/components/providers";
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-sans",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "AI Voice Studio | AI-Powered Voice Cloning & Text-to-Speech",
@@ -16,7 +23,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
-      <body className="min-h-screen bg-background text-foreground antialiased">
+      <body className={`${inter.variable} ${inter.className} min-h-screen bg-background text-foreground antialiased`}>
         <Providers>
           {children}
           <Toaster />

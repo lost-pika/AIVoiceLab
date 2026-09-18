@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { Button } from "../ui/button";
-import { Crown, Sparkles } from "lucide-react";
+import { Crown } from "lucide-react";
 import { authClient } from "~/lib/auth-client";
 import { AddCreditsModal } from "../credits/add-credits-modal";
 
@@ -35,7 +35,6 @@ export default function Upgrade() {
         <div className="flex items-center gap-1.5">
           <Crown className="h-3.5 w-3.5 transition-transform duration-300 group-hover:rotate-12 text-amber-500 group-hover:text-white" />
           <span>Pro Studio</span>
-          <Sparkles className="h-2.5 w-2.5 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
         </div>
       </Button>
 

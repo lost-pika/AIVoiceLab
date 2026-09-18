@@ -58,13 +58,13 @@ export async function signUpAction(data: z.infer<typeof SignUpSchema>): Promise<
     // Hash password with bcrypt
     const hashedPassword = await hashPassword(password);
 
-    // Create user with default 10 credits
+    // Create user with default 20 starter credits
     const user = await db.user.create({
       data: {
         name,
         email,
         password: hashedPassword,
-        credits: 10,
+        credits: 20,
       },
     });
 

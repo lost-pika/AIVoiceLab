@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Coins, Sparkles, Zap, Check, Gift, Loader2 } from "lucide-react";
+import { Coins, Zap, Check, Gift, Loader2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -83,8 +83,11 @@ export function AddCreditsModal({
         description: `Your new balance is ${res.credits ?? ""} credits.`,
       });
 
-      if (res.credits !== undefined && onCreditsAdded) {
-        onCreditsAdded(res.credits);
+      if (res.credits !== undefined) {
+        window.dispatchEvent(
+          new CustomEvent("credits-updated", { detail: res.credits })
+        );
+        onCreditsAdded?.(res.credits);
       }
 
       router.refresh();
@@ -102,27 +105,27 @@ export function AddCreditsModal({
         <DialogTrigger asChild>{trigger || children}</DialogTrigger>
       )}
       <DialogContent className="max-w-xl p-6 border-border/80 bg-card/95 backdrop-blur-xl">
-        <DialogHeader className="text-left mb-2">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-amber-500 to-yellow-400 text-black shadow-md shadow-amber-500/20">
-                <Coins className="h-5 w-5" />
+        <DialogHeader className="text-left mb-2 pr-10">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-2.5">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-amber-500/10 text-amber-500 border border-amber-500/20 shrink-0">
+                <Coins className="h-4 w-4" />
               </div>
               <div>
-                <DialogTitle className="text-lg font-bold text-foreground">
+                <DialogTitle className="text-base font-bold text-foreground">
                   Top Up Audio Credits
                 </DialogTitle>
                 <DialogDescription className="text-xs text-muted-foreground">
-                  Choose a credit package or claim instant bonus credits
+                  Choose a credit package or claim daily bonus credits
                 </DialogDescription>
               </div>
             </div>
             {currentCredits !== undefined && (
-              <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-1.5 text-right">
-                <span className="block text-[10px] font-medium text-amber-600 dark:text-amber-400">
+              <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-2.5 py-1 text-right shrink-0">
+                <span className="block text-[9px] font-medium text-amber-600 dark:text-amber-400">
                   Current Balance
                 </span>
-                <span className="text-sm font-black text-amber-700 dark:text-amber-300">
+                <span className="text-xs font-bold text-amber-700 dark:text-amber-300">
                   {currentCredits} Credits
                 </span>
               </div>
@@ -215,7 +218,7 @@ export function AddCreditsModal({
         {/* Action Button */}
         <div className="mt-3 flex items-center justify-between border-t border-border/50 pt-4">
           <p className="text-[11px] text-muted-foreground flex items-center gap-1.5">
-            <Sparkles className="h-3.5 w-3.5 text-primary" />
+            <Zap className="h-3.5 w-3.5 text-amber-500" />
             1 Credit = 100 characters of natural synthesized audio
           </p>
           <Button

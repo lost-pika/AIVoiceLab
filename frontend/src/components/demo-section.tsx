@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Card } from "~/components/ui/card";
-import { Play, Pause, Sparkles, Volume2 } from "lucide-react";
+import { Play, Pause, Volume2 } from "lucide-react";
 import Link from "next/link";
 
 export default function DemoSection() {
@@ -260,7 +260,7 @@ export default function DemoSection() {
               size="lg"
               className="gap-2 rounded-xl bg-gradient-to-r from-cyan-400 to-emerald-400 text-black font-black text-xs uppercase tracking-wider shadow-lg shadow-cyan-500/25 hover:opacity-95"
             >
-              <Sparkles className="h-4 w-4" />
+              <Volume2 className="h-4 w-4" />
               <span>Launch Studio Free</span>
             </Button>
           </Link>

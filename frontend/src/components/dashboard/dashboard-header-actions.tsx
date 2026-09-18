@@ -26,7 +26,24 @@ export function DashboardHeaderActions() {
       }
     }
     void loadCredits();
+
+    const handleCreditsUpdated = (e: Event) => {
+      const customEvent = e as CustomEvent<number>;
+      if (typeof customEvent.detail === "number") {
+        setCredits(customEvent.detail);
+      }
+    };
+    window.addEventListener("credits-updated", handleCreditsUpdated);
+    return () =>
+      window.removeEventListener("credits-updated", handleCreditsUpdated);
   }, [pathname]);
+
+  const handleCreditsChange = (newAmt: number) => {
+    setCredits(newAmt);
+    window.dispatchEvent(
+      new CustomEvent("credits-updated", { detail: newAmt }),
+    );
+  };
 
   return (
     <div className="flex items-center gap-2.5">
@@ -68,7 +85,7 @@ export function DashboardHeaderActions() {
         open={modalOpen}
         onOpenChange={setModalOpen}
         currentCredits={credits ?? 0}
-        onCreditsAdded={(newAmt) => setCredits(newAmt)}
+        onCreditsAdded={handleCreditsChange}
       />
     </div>
   );

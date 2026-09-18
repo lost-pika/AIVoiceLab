@@ -7,16 +7,13 @@ import {
   Upload,
   Play,
   Square,
-  Sparkles,
   Sliders,
-  Gauge,
-  Loader2,
   Mic,
-  CheckCircle2,
-  Radio,
-  Music2,
-  Layers,
-  Flame,
+  Check,
+  ChevronDown,
+  LayoutGrid,
+  List,
+  Plus,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
@@ -36,9 +33,9 @@ interface SpeechSettingsProps {
   userUploadedVoices: UploadedVoice[];
   isUploadingVoice: boolean;
   handleVoiceUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  text: string;
-  isGenerating: boolean;
-  onGenerate: () => void;
+  text?: string;
+  isGenerating?: boolean;
+  onGenerate?: () => void;
 }
 
 const PRESET_AUDIO_MAP: Record<string, string> = {
@@ -122,11 +119,10 @@ export default function SpeechSettings({
   userUploadedVoices,
   isUploadingVoice,
   handleVoiceUpload,
-  text,
-  isGenerating,
-  onGenerate,
 }: SpeechSettingsProps) {
   const [playingVoice, setPlayingVoice] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<"dropdown" | "grid">("dropdown");
+  const [showSettings, setShowSettings] = useState(false);
   const audioPreviewRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
@@ -180,41 +176,384 @@ export default function SpeechSettings({
     };
   };
 
-  const getExaggerationLabel = (val: number) => {
-    if (val < 0.3) return "Subtle & Neutral";
-    if (val < 0.6) return "Natural Studio Balance";
-    if (val < 0.85) return "Dramatic & Expressive";
-    return "High Theatrical Energy";
-  };
+  const selectedVoiceObj =
+    voiceFiles.find((v) => v.s3_key === selectedVoice) ||
+    userUploadedVoices.find((v) => v.s3Key === selectedVoice);
 
-  const getCfgLabel = (val: number) => {
-    if (val < 0.3) return "Creative Natural Flow";
-    if (val < 0.6) return "Balanced Audio Clarity";
-    if (val < 0.85) return "Strict Prompt Fidelity";
-    return "Ultra-Strict Articulation";
+  const selectedPersona = VOICE_PERSONAS[selectedVoice] ?? {
+    tag: "Custom Cloned Voice",
+    gender: "Male" as const,
+    tone: "User Recorded",
+    avatar: "🎙️",
   };
 
   return (
     <div className="space-y-4">
-      {/* Language Matrix Strip */}
-      <Card className="border-border/60 bg-card/70 backdrop-blur-xl shadow-md overflow-hidden">
-        <CardHeader className="pb-2 pt-3.5 px-4">
+      {/* Voice Selection Panel */}
+      <Card className="border-border/60 bg-card/70 backdrop-blur-xl shadow-xs">
+        <CardHeader className="pb-2.5 pt-4 px-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary/10 text-primary">
+                <Mic className="h-3.5 w-3.5" />
+              </div>
+              <CardTitle className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Voice Selection
+              </CardTitle>
+            </div>
+
+            {/* View Style Switcher */}
+            <div className="flex items-center gap-1 rounded-lg border border-border/50 bg-background/50 p-0.5">
+              <button
+                type="button"
+                onClick={() => setViewMode("dropdown")}
+                className={`flex items-center gap-1 rounded-md px-2 py-1 text-[11px] font-medium transition-colors ${
+                  viewMode === "dropdown"
+                    ? "bg-card text-foreground shadow-xs"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+                title="Compact dropdown view"
+              >
+                <List className="h-3 w-3" />
+                <span className="hidden sm:inline">Dropdown</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode("grid")}
+                className={`flex items-center gap-1 rounded-md px-2 py-1 text-[11px] font-medium transition-colors ${
+                  viewMode === "grid"
+                    ? "bg-card text-foreground shadow-xs"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+                title="Grid view"
+              >
+                <LayoutGrid className="h-3 w-3" />
+                <span className="hidden sm:inline">Grid</span>
+              </button>
+            </div>
+          </div>
+        </CardHeader>
+
+        <CardContent className="px-4 pb-4 pt-0 space-y-3">
+          {/* Dropdown Mode (Default) */}
+          {viewMode === "dropdown" ? (
+            <div className="space-y-2.5">
+              {/* Voice Selector Row */}
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                <div className="relative flex-1">
+                  <select
+                    value={selectedVoice}
+                    onChange={(e) => setSelectedVoice(e.target.value)}
+                    className="w-full appearance-none rounded-xl border border-border/80 bg-background/80 px-3.5 py-2.5 pr-9 text-xs font-medium text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary transition-all"
+                  >
+                    <optgroup label="Preset Studio Voices">
+                      {voiceFiles.map((v) => {
+                        const persona = VOICE_PERSONAS[v.s3_key];
+                        return (
+                          <option key={v.s3_key} value={v.s3_key}>
+                            {persona?.avatar ?? "🎙️"} {v.name}{" "}
+                            {persona?.tag ? `• ${persona.tag}` : ""}
+                          </option>
+                        );
+                      })}
+                    </optgroup>
+
+                    {userUploadedVoices.length > 0 && (
+                      <optgroup label="Your Custom Cloned Voices">
+                        {userUploadedVoices.map((v) => (
+                          <option key={v.s3Key} value={v.s3Key}>
+                            ✨ {v.name} (Custom Clone)
+                          </option>
+                        ))}
+                      </optgroup>
+                    )}
+                  </select>
+                  <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                </div>
+
+                {/* Audition Button for Selected Voice */}
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={(e) => {
+                    const customObj = userUploadedVoices.find(
+                      (uv) => uv.s3Key === selectedVoice,
+                    );
+                    handleTogglePreview(e, selectedVoice, customObj?.url);
+                  }}
+                  className={`h-9 px-3 gap-1.5 text-xs rounded-xl font-medium shrink-0 transition-all ${
+                    playingVoice === selectedVoice
+                      ? "border-primary bg-primary/15 text-primary"
+                      : "border-border/60 bg-background/50 hover:bg-muted/40"
+                  }`}
+                  title="Audition selected voice sample"
+                >
+                  {playingVoice === selectedVoice ? (
+                    <>
+                      <Square className="h-3 w-3 fill-current" />
+                      <span>Stop Sample</span>
+                    </>
+                  ) : (
+                    <>
+                      <Play className="h-3 w-3 fill-current" />
+                      <span>Audition Voice</span>
+                    </>
+                  )}
+                </Button>
+              </div>
+
+              {/* Active Voice Information Strip */}
+              <div className="flex items-center justify-between rounded-lg border border-border/50 bg-muted/20 px-3 py-2 text-xs">
+                <div className="flex items-center gap-2">
+                  <span className="text-base">{selectedPersona.avatar}</span>
+                  <div>
+                    <span className="font-semibold text-foreground">
+                      {selectedVoiceObj?.name ?? "Selected Voice"}
+                    </span>
+                    <span className="text-[11px] text-muted-foreground ml-2">
+                      {selectedPersona.tag}
+                    </span>
+                  </div>
+                </div>
+                <span className="text-[11px] text-muted-foreground hidden sm:inline">
+                  {selectedPersona.tone}
+                </span>
+              </div>
+            </div>
+          ) : (
+            /* Grid View Mode */
+            <div className="space-y-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-80 overflow-y-auto pr-1">
+                {voiceFiles.map((voice) => {
+                  const persona = VOICE_PERSONAS[voice.s3_key] ?? {
+                    tag: "Studio Persona",
+                    gender: "Male",
+                    tone: "Natural & Clear",
+                    avatar: "🎙️",
+                  };
+                  const isSelected = selectedVoice === voice.s3_key;
+                  const isPlaying = playingVoice === voice.s3_key;
+
+                  return (
+                    <div
+                      key={voice.s3_key}
+                      onClick={() => setSelectedVoice(voice.s3_key)}
+                      className={`group relative flex flex-col justify-between rounded-xl p-3 cursor-pointer transition-all duration-150 border text-left ${
+                        isSelected
+                          ? "bg-primary/10 border-primary shadow-xs"
+                          : "bg-background/50 border-border/60 hover:border-border hover:bg-muted/20"
+                      }`}
+                    >
+                      <div className="flex items-start justify-between gap-2 mb-2">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xl">{persona.avatar}</span>
+                          <div>
+                            <h4 className="text-xs font-bold text-foreground group-hover:text-primary transition-colors">
+                              {voice.name}
+                            </h4>
+                            <p className="text-[10px] text-muted-foreground">
+                              {persona.tag}
+                            </p>
+                          </div>
+                        </div>
+
+                        {isSelected && (
+                          <div className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                            <Check className="h-2.5 w-2.5 stroke-[3]" />
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="mt-1 pt-2 border-t border-border/40 flex items-center justify-between">
+                        <span className="text-[10px] text-muted-foreground truncate max-w-[140px]">
+                          {persona.tone}
+                        </span>
+
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="ghost"
+                          onClick={(e) => handleTogglePreview(e, voice.s3_key)}
+                          className={`h-6 px-2 text-[10px] gap-1 rounded-md font-medium ${
+                            isPlaying
+                              ? "bg-primary/20 text-primary"
+                              : "text-muted-foreground hover:text-foreground"
+                          }`}
+                        >
+                          {isPlaying ? (
+                            <>
+                              <Square className="h-2.5 w-2.5 fill-current" />
+                              <span>Stop</span>
+                            </>
+                          ) : (
+                            <>
+                              <Play className="h-2.5 w-2.5 fill-current" />
+                              <span>Audition</span>
+                            </>
+                          )}
+                        </Button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {userUploadedVoices.length > 0 && (
+                <div className="pt-2 border-t border-border/50">
+                  <span className="text-[11px] font-semibold text-muted-foreground block mb-2">
+                    Your Cloned Voices
+                  </span>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {userUploadedVoices.map((voice) => {
+                      const isSelected = selectedVoice === voice.s3Key;
+                      const isPlaying = playingVoice === voice.s3Key;
+
+                      return (
+                        <div
+                          key={voice.id}
+                          onClick={() => setSelectedVoice(voice.s3Key)}
+                          className={`flex items-center justify-between p-2.5 rounded-xl border cursor-pointer transition-all ${
+                            isSelected
+                              ? "bg-primary/10 border-primary"
+                              : "bg-background/50 border-border/60 hover:bg-muted/20"
+                          }`}
+                        >
+                          <div className="flex items-center gap-2 truncate">
+                            <span className="text-base">🎙️</span>
+                            <span className="text-xs font-semibold text-foreground truncate">
+                              {voice.name}
+                            </span>
+                          </div>
+
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="ghost"
+                            onClick={(e) =>
+                              handleTogglePreview(e, voice.s3Key, voice.url)
+                            }
+                            className="h-6 px-2 text-[10px]"
+                          >
+                            {isPlaying ? (
+                              <Square className="h-2.5 w-2.5 fill-current text-primary" />
+                            ) : (
+                              <Play className="h-2.5 w-2.5 fill-current" />
+                            )}
+                          </Button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Quick Voice Clone Trigger */}
+          <div className="pt-2 border-t border-border/40 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <label
+                htmlFor="voice-upload-input"
+                className="cursor-pointer inline-flex items-center gap-1.5 rounded-lg border border-border/60 bg-background/50 hover:bg-muted/40 hover:border-primary/40 px-2.5 py-1.5 text-xs font-medium text-foreground transition-all"
+              >
+                <Upload className="h-3.5 w-3.5 text-primary" />
+                <span>Clone Custom Voice (5-10s audio)</span>
+                <input
+                  id="voice-upload-input"
+                  type="file"
+                  accept="audio/*"
+                  onChange={handleVoiceUpload}
+                  disabled={isUploadingVoice}
+                  className="hidden"
+                />
+              </label>
+              {isUploadingVoice && (
+                <span className="text-[11px] text-muted-foreground animate-pulse">
+                  Uploading & analyzing voice...
+                </span>
+              )}
+            </div>
+
+            {/* Subtle Settings Toggle */}
+            <button
+              type="button"
+              onClick={() => setShowSettings(!showSettings)}
+              className="flex items-center gap-1 text-[11px] text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <Sliders className="h-3 w-3" />
+              <span>{showSettings ? "Hide Adjustments" : "Adjust Voice"}</span>
+            </button>
+          </div>
+
+          {/* Collapsible Voice Settings (Expressiveness & Clarity) */}
+          {showSettings && (
+            <div className="rounded-xl border border-border/50 bg-background/60 p-3 space-y-3 pt-2 mt-2">
+              {/* Expressiveness Slider */}
+              <div className="space-y-1">
+                <div className="flex justify-between text-xs">
+                  <span className="font-medium text-foreground">
+                    Expressiveness / Emotion
+                  </span>
+                  <span className="font-mono text-muted-foreground">
+                    {exaggeration.toFixed(2)}
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  min="0.1"
+                  max="1.0"
+                  step="0.05"
+                  value={exaggeration}
+                  onChange={(e) => setExaggeration(parseFloat(e.target.value))}
+                  className="w-full accent-primary h-1.5 bg-muted rounded-lg cursor-pointer"
+                />
+              </div>
+
+              {/* Clarity Slider */}
+              <div className="space-y-1">
+                <div className="flex justify-between text-xs">
+                  <span className="font-medium text-foreground">
+                    Clarity & Articulation Guidance
+                  </span>
+                  <span className="font-mono text-muted-foreground">
+                    {cfgWeight.toFixed(2)}
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  min="0.1"
+                  max="1.0"
+                  step="0.05"
+                  value={cfgWeight}
+                  onChange={(e) => setCfgWeight(parseFloat(e.target.value))}
+                  className="w-full accent-primary h-1.5 bg-muted rounded-lg cursor-pointer"
+                />
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Target Language Card */}
+      <Card className="border-border/60 bg-card/70 backdrop-blur-xl shadow-xs overflow-hidden">
+        <CardHeader className="pb-2 pt-3 px-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary/10 text-primary">
                 <Globe className="h-3.5 w-3.5" />
               </div>
-              <CardTitle className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+              <CardTitle className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 Target Language
               </CardTitle>
             </div>
-            <span className="text-[10px] text-muted-foreground font-medium">
-              23 Global Dialects
+            <span className="text-[10px] text-muted-foreground">
+              23 Languages Supported
             </span>
           </div>
         </CardHeader>
-        <CardContent className="px-4 pb-3.5 pt-0 space-y-2.5">
-          {/* Quick Language Capsules */}
+        <CardContent className="px-4 pb-3.5 pt-0 space-y-2">
+          {/* Popular Quick Select Chips */}
           <div className="flex flex-wrap gap-1.5">
             {POPULAR_LANGS.map((code) => {
               const lang = languages.find((l) => l.code === code);
@@ -226,10 +565,10 @@ export default function SpeechSettings({
                   key={code}
                   type="button"
                   onClick={() => setSelectedLanguage(code)}
-                  className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-semibold transition-all ${
+                  className={`inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-medium transition-all ${
                     isSelected
-                      ? "bg-primary text-primary-foreground shadow-xs shadow-primary/30"
-                      : "bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground border border-border/40"
+                      ? "bg-primary text-primary-foreground shadow-xs"
+                      : "bg-muted/40 text-muted-foreground hover:bg-muted hover:text-foreground border border-border/40"
                   }`}
                 >
                   <span>{lang.flag}</span>
@@ -239,7 +578,7 @@ export default function SpeechSettings({
             })}
           </div>
 
-          {/* Full Language Dropdown */}
+          {/* Full Language Selector */}
           <select
             value={selectedLanguage}
             onChange={(e) => setSelectedLanguage(e.target.value)}
@@ -253,322 +592,6 @@ export default function SpeechSettings({
           </select>
         </CardContent>
       </Card>
-
-      {/* Voice Deck: Interactive Persona Cards Grid */}
-      <Card className="border-border/60 bg-card/70 backdrop-blur-xl shadow-md">
-        <CardHeader className="pb-2.5 pt-4 px-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="flex h-6 w-6 items-center justify-center rounded-md bg-emerald-500/10 text-emerald-400">
-                <Music2 className="h-3.5 w-3.5" />
-              </div>
-              <div>
-                <CardTitle className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                  Voice Persona Deck
-                </CardTitle>
-              </div>
-            </div>
-
-            <span className="text-[10px] text-primary font-semibold flex items-center gap-1">
-              <Sparkles className="h-3 w-3" />
-              <span>Click card to select</span>
-            </span>
-          </div>
-        </CardHeader>
-
-        <CardContent className="px-4 pb-4 pt-0 space-y-2.5">
-          {/* Preset Voice Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            {voiceFiles.map((voice) => {
-              const persona = VOICE_PERSONAS[voice.s3_key] ?? {
-                tag: "Studio Persona",
-                gender: "Male",
-                tone: "Natural & Clear",
-                avatar: "🎙️",
-              };
-              const isSelected = selectedVoice === voice.s3_key;
-              const isPlaying = playingVoice === voice.s3_key;
-
-              return (
-                <div
-                  key={voice.s3_key}
-                  onClick={() => setSelectedVoice(voice.s3_key)}
-                  className={`group relative flex flex-col justify-between rounded-xl p-3 cursor-pointer transition-all duration-200 border text-left ${
-                    isSelected
-                      ? "bg-primary/10 border-primary/60 shadow-xs shadow-primary/20"
-                      : "bg-background/50 border-border/70 hover:border-border hover:bg-muted/30"
-                  }`}
-                >
-                  <div>
-                    <div className="flex items-start justify-between gap-1.5 mb-1">
-                      <div className="flex items-center gap-2">
-                        <span className="text-base leading-none">{persona.avatar}</span>
-                        <div>
-                          <h4 className="text-xs font-bold text-foreground group-hover:text-primary transition-colors">
-                            {voice.name}
-                          </h4>
-                          <span className="text-[10px] text-muted-foreground font-medium block">
-                            {persona.gender} • {persona.tag}
-                          </span>
-                        </div>
-                      </div>
-
-                      {isSelected && (
-                        <div className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
-                          <CheckCircle2 className="h-3 w-3" />
-                        </div>
-                      )}
-                    </div>
-
-                    <p className="text-[10px] text-muted-foreground/80 italic line-clamp-1 mb-2">
-                      &ldquo;{persona.tone}&rdquo;
-                    </p>
-                  </div>
-
-                  {/* In-Card Audition Action */}
-                  <div className="pt-2 border-t border-border/40 flex items-center justify-between gap-2">
-                    <button
-                      type="button"
-                      onClick={(e) => handleTogglePreview(e, voice.s3_key)}
-                      className={`inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-[11px] font-semibold transition-all ${
-                        isPlaying
-                          ? "bg-primary text-primary-foreground shadow-xs shadow-primary"
-                          : "bg-muted/60 text-muted-foreground hover:text-foreground hover:bg-muted"
-                      }`}
-                      title="Audition voice sample"
-                    >
-                      {isPlaying ? (
-                        <>
-                          <Square className="h-3 w-3 fill-current" />
-                          <span>Stop</span>
-                        </>
-                      ) : (
-                        <>
-                          <Play className="h-3 w-3 fill-current" />
-                          <span>Audition</span>
-                        </>
-                      )}
-                    </button>
-
-                    {/* Animated Soundwave for Playing Voice */}
-                    {isPlaying && (
-                      <div className="flex items-center gap-0.5 pr-1">
-                        <span className="audio-bar h-2 w-0.5 bg-primary rounded-full"></span>
-                        <span className="audio-bar h-3.5 w-0.5 bg-primary rounded-full"></span>
-                        <span className="audio-bar h-2.5 w-0.5 bg-primary rounded-full"></span>
-                        <span className="audio-bar h-4 w-0.5 bg-primary rounded-full"></span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* User Uploaded Custom Cloned Voices */}
-          {userUploadedVoices.length > 0 && (
-            <div className="mt-3 pt-3 border-t border-border/50">
-              <span className="text-[11px] font-bold text-foreground block mb-2">
-                Your Custom Cloned Voices
-              </span>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {userUploadedVoices.map((voice) => {
-                  const isSelected = selectedVoice === voice.s3Key;
-                  const isPlaying = playingVoice === voice.s3Key;
-
-                  return (
-                    <div
-                      key={voice.id}
-                      onClick={() => setSelectedVoice(voice.s3Key)}
-                      className={`relative flex items-center justify-between rounded-xl p-2.5 cursor-pointer border transition-all ${
-                        isSelected
-                          ? "bg-primary/10 border-primary/60"
-                          : "bg-background/40 border-border/70 hover:border-border"
-                      }`}
-                    >
-                      <div className="flex items-center gap-2 min-w-0 flex-1">
-                        <span className="text-sm">🧬</span>
-                        <div className="min-w-0 flex-1">
-                          <h4 className="text-xs font-bold text-foreground truncate">
-                            {voice.name}
-                          </h4>
-                          <span className="text-[10px] text-muted-foreground block">
-                            Custom Clone
-                          </span>
-                        </div>
-                      </div>
-
-                      <button
-                        type="button"
-                        onClick={(e) =>
-                          handleTogglePreview(e, voice.s3Key, voice.url)
-                        }
-                        className="ml-2 rounded-md p-1.5 text-muted-foreground hover:text-foreground bg-muted/50 hover:bg-muted"
-                        title="Audition clone sample"
-                      >
-                        {isPlaying ? (
-                          <Square className="h-3 w-3 fill-current text-primary" />
-                        ) : (
-                          <Play className="h-3 w-3 fill-current" />
-                        )}
-                      </button>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* Custom Voice Clone Dropper Zone */}
-          <div className="mt-3 rounded-xl border border-dashed border-border/80 bg-background/30 p-3 text-center transition-all hover:border-primary/40">
-            <div className="flex items-center justify-between gap-3">
-              <div className="flex items-center gap-2.5 text-left">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                  <Upload className="h-4 w-4" />
-                </div>
-                <div>
-                  <span className="text-xs font-bold text-foreground block">
-                    Clone a New Voice
-                  </span>
-                  <span className="text-[10px] text-muted-foreground block">
-                    Drop a 5-10s clear WAV/MP3 clip (&lt; 10MB)
-                  </span>
-                </div>
-              </div>
-
-              <label className="cursor-pointer">
-                <input
-                  type="file"
-                  accept="audio/*"
-                  onChange={handleVoiceUpload}
-                  disabled={isUploadingVoice}
-                  className="hidden"
-                />
-                <span className="inline-flex items-center gap-1.5 rounded-lg bg-muted px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-accent/80 transition-colors border border-border/60">
-                  {isUploadingVoice ? (
-                    <>
-                      <Loader2 className="h-3 w-3 animate-spin" />
-                      <span>Cloning...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Mic className="h-3 w-3 text-primary" />
-                      <span>Upload Clip</span>
-                    </>
-                  )}
-                </span>
-              </label>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Acoustic Rack Controls: Exaggeration & Guidance Sliders */}
-      <Card className="border-border/60 bg-card/70 backdrop-blur-xl shadow-md">
-        <CardHeader className="pb-2 pt-3 px-4">
-          <div className="flex items-center gap-2">
-            <div className="flex h-6 w-6 items-center justify-center rounded-md bg-purple-500/10 text-purple-400">
-              <Sliders className="h-3.5 w-3.5" />
-            </div>
-            <CardTitle className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-              Acoustic Studio Faders
-            </CardTitle>
-          </div>
-        </CardHeader>
-
-        <CardContent className="px-4 pb-4 pt-0 space-y-4">
-          {/* Exaggeration Slider */}
-          <div className="space-y-1.5">
-            <div className="flex items-center justify-between text-xs">
-              <span className="font-semibold text-foreground flex items-center gap-1.5">
-                <Flame className="h-3.5 w-3.5 text-amber-500" />
-                Expressiveness & Emotion
-              </span>
-              <span className="font-mono text-[11px] font-bold text-primary">
-                {exaggeration.toFixed(2)}
-              </span>
-            </div>
-            <input
-              type="range"
-              min="0.1"
-              max="1.0"
-              step="0.05"
-              value={exaggeration}
-              onChange={(e) => setExaggeration(parseFloat(e.target.value))}
-              className="w-full accent-cyan-400 cursor-pointer h-1.5 bg-muted rounded-lg"
-            />
-            <div className="flex items-center justify-between text-[10px] text-muted-foreground">
-              <span>{getExaggerationLabel(exaggeration)}</span>
-              <span>Default: 0.50</span>
-            </div>
-          </div>
-
-          {/* CFG Guidance Weight Slider */}
-          <div className="space-y-1.5">
-            <div className="flex items-center justify-between text-xs">
-              <span className="font-semibold text-foreground flex items-center gap-1.5">
-                <Gauge className="h-3.5 w-3.5 text-emerald-500" />
-                Clarity & Pacing Guidance
-              </span>
-              <span className="font-mono text-[11px] font-bold text-accent">
-                {cfgWeight.toFixed(2)}
-              </span>
-            </div>
-            <input
-              type="range"
-              min="0.1"
-              max="1.0"
-              step="0.05"
-              value={cfgWeight}
-              onChange={(e) => setCfgWeight(parseFloat(e.target.value))}
-              className="w-full accent-emerald-400 cursor-pointer h-1.5 bg-muted rounded-lg"
-            />
-            <div className="flex items-center justify-between text-[10px] text-muted-foreground">
-              <span>{getCfgLabel(cfgWeight)}</span>
-              <span>Default: 0.50</span>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Synthesis Master Button Bar */}
-      <div className="rounded-2xl border border-primary/30 bg-gradient-to-r from-primary/15 via-emerald-500/10 to-card/80 p-3.5 backdrop-blur-xl shadow-lg">
-        <div className="flex items-center justify-between gap-3">
-          <div>
-            <div className="flex items-center gap-1.5 text-xs font-bold text-foreground">
-              <Sparkles className="h-3.5 w-3.5 text-primary" />
-              <span>Generation Master</span>
-            </div>
-            <p className="text-[11px] text-muted-foreground">
-              Synthesize script with selected voice clone
-            </p>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <span className="text-[11px] font-semibold text-muted-foreground hidden sm:inline">
-              1 Credit / generation
-            </span>
-
-            <Button
-              onClick={onGenerate}
-              disabled={isGenerating || !text.trim()}
-              className="h-10 px-6 gap-2 rounded-xl bg-gradient-to-r from-cyan-400 to-emerald-400 text-black font-black text-xs uppercase tracking-wider hover:opacity-90 shadow-md shadow-cyan-500/25 transition-all disabled:opacity-50"
-            >
-              {isGenerating ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  <span>Synthesizing...</span>
-                </>
-              ) : (
-                <>
-                  <Mic className="h-4 w-4 fill-current" />
-                  <span>Synthesize Audio</span>
-                </>
-              )}
-            </Button>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }

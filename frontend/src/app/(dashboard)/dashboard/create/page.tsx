@@ -1,12 +1,13 @@
 "use client";
 
-import { Loader2, Mic2, Sparkles, Volume2, Cpu, Waves } from "lucide-react";
+import { Loader2, Volume2, Mic, Music } from "lucide-react";
 import { authClient } from "~/lib/auth-client";
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
   generateSpeech as generateSpeechAction,
   getUserAudioProjects,
+  getUserCredits,
 } from "~/actions/tts";
 import { uploadVoice, getUserUploadedVoices } from "~/actions/voice-upload";
 import { toast } from "sonner";
@@ -19,6 +20,7 @@ import type {
 import SpeechSettings from "~/components/create/speech-settings";
 import TextInput from "~/components/create/text-input";
 import AudioHistory from "~/components/create/audio-history";
+import { AddCreditsModal } from "~/components/credits/add-credits-modal";
 
 const LANGUAGES: Language[] = [
   { code: "en", name: "English", flag: "🇺🇸" },
@@ -72,9 +74,9 @@ export default function CreatePage() {
   const [cfgWeight, setCfgWeight] = useState(0.5);
   const [generatedAudios, setGeneratedAudios] = useState<GeneratedAudio[]>([]);
   const [currentAudio, setCurrentAudio] = useState<GeneratedAudio | null>(null);
-  const [userUploadedVoices, setUserUploadedVoices] = useState<UploadedVoice[]>(
-    [],
-  );
+  const [userUploadedVoices, setUserUploadedVoices] = useState<UploadedVoice[]>([]);
+  const [topUpOpen, setTopUpOpen] = useState(false);
+  const [credits, setCredits] = useState<number>(0);
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const fetchUserUploadedVoices = async () => {
@@ -87,10 +89,11 @@ export default function CreatePage() {
   useEffect(() => {
     const initializeData = async () => {
       try {
-        const [, projectsResult, voicesResult] = await Promise.all([
+        const [, projectsResult, voicesResult, creditsResult] = await Promise.all([
           authClient.getSession(),
           getUserAudioProjects(),
           getUserUploadedVoices(),
+          getUserCredits(),
         ]);
         if (projectsResult.success && projectsResult.audioProjects) {
           const mappedProjects = projectsResult.audioProjects.map(
@@ -109,6 +112,10 @@ export default function CreatePage() {
           setUserUploadedVoices(voicesResult.voices);
         }
 
+        if (creditsResult.success && creditsResult.credits !== undefined) {
+          setCredits(creditsResult.credits);
+        }
+
         setIsLoading(false);
       } catch (error) {
         console.error("Error initializing data:", error);
@@ -117,6 +124,16 @@ export default function CreatePage() {
     };
 
     void initializeData();
+
+    const handleCreditsUpdated = (e: Event) => {
+      const customEvent = e as CustomEvent<number>;
+      if (typeof customEvent.detail === "number") {
+        setCredits(customEvent.detail);
+      }
+    };
+    window.addEventListener("credits-updated", handleCreditsUpdated);
+    return () =>
+      window.removeEventListener("credits-updated", handleCreditsUpdated);
   }, []);
 
   const generateSpeech = async () => {
@@ -136,6 +153,14 @@ export default function CreatePage() {
 
       if (!result.success || !result.audioUrl || !result.s3_key) {
         throw new Error(result.error ?? "Generation failed");
+      }
+
+      // Decrement credits live in UI
+      if (result.remainingCredits !== undefined) {
+        setCredits(result.remainingCredits);
+        window.dispatchEvent(
+          new CustomEvent("credits-updated", { detail: result.remainingCredits }),
+        );
       }
 
       router.refresh();
@@ -160,7 +185,7 @@ export default function CreatePage() {
         }
       }, 100);
 
-      toast.success("Speech synthesized successfully!");
+      toast.success("Speech generated successfully!");
     } catch (error) {
       console.error("Generation error:", error);
       const errorMessage =
@@ -229,8 +254,8 @@ export default function CreatePage() {
     return (
       <div className="flex min-h-[400px] items-center justify-center">
         <div className="flex flex-col items-center gap-3">
-          <Loader2 className="h-8 w-8 animate-spin text-cyan-400" />
-          <p className="text-xs text-muted-foreground">Initializing Neural Audio Workstation...</p>
+          <Loader2 className="h-6 w-6 animate-spin text-primary" />
+          <p className="text-xs text-muted-foreground">Loading studio...</p>
         </div>
       </div>
     );
@@ -238,41 +263,24 @@ export default function CreatePage() {
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
-      {/* Studio Header Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-border/60 pb-5">
+      {/* Studio Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-border/60 pb-4">
         <div>
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-400 to-emerald-400 text-black shadow-md shadow-cyan-500/20 font-black">
-              <Waves className="h-4 w-4" />
+          <div className="flex items-center gap-2">
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 text-primary font-bold">
+              <Mic className="h-4 w-4" />
             </div>
-            <h1 className="text-2xl font-black tracking-tight text-foreground sm:text-3xl">
-              Audio Synthesis Deck
+            <h1 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
+              Voice Studio
             </h1>
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-xs font-bold text-emerald-400 border border-emerald-500/30">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              Live Engine
-            </span>
           </div>
-          <p className="text-xs text-muted-foreground mt-1">
-            Zero-shot voice cloning and multilingual speech synthesis across 23 global languages
+          <p className="text-xs text-muted-foreground mt-0.5">
+            Generate lifelike, natural speech and clone custom voices in 23 languages
           </p>
-        </div>
-
-        {/* Hardware Status Strip */}
-        <div className="flex items-center gap-2 self-start sm:self-auto">
-          <div className="rounded-xl border border-cyan-500/20 bg-cyan-500/5 px-3 py-1.5 text-right backdrop-blur-sm">
-            <div className="flex items-center gap-1.5 justify-end">
-              <Cpu className="h-3 w-3 text-cyan-400" />
-              <span className="text-[10px] uppercase font-bold tracking-wider text-cyan-400">
-                GPU Inference
-              </span>
-            </div>
-            <span className="text-xs font-bold text-foreground">F5-TTS Multi-Voice</span>
-          </div>
         </div>
       </div>
 
-      {/* Main Studio Deck Layout (Voice Selector 5 cols, Teleprompter & Master 7 cols) */}
+      {/* Main Studio Deck Layout (Voice Settings 5 cols, Script Editor 7 cols) */}
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-12 items-start">
         <div className="lg:col-span-5 space-y-4">
           <SpeechSettings
@@ -289,9 +297,6 @@ export default function CreatePage() {
             userUploadedVoices={userUploadedVoices}
             isUploadingVoice={isUploadingVoice}
             handleVoiceUpload={handleVoiceUpload}
-            text={text}
-            isGenerating={isGenerating}
-            onGenerate={generateSpeech}
           />
         </div>
 
@@ -302,16 +307,26 @@ export default function CreatePage() {
             currentAudio={currentAudio}
             audioRef={audioRef}
             onDownload={downloadAudio}
+            onGenerate={generateSpeech}
+            isGenerating={isGenerating}
+            onOpenTopUp={() => setTopUpOpen(true)}
           />
         </div>
       </div>
 
-      {/* Session Master Tape Reel */}
+      {/* Recent Generations */}
       <AudioHistory
         generatedAudios={generatedAudios}
         languages={LANGUAGES}
         onPlay={playAudio}
         onDownload={downloadAudio}
+      />
+
+      <AddCreditsModal
+        open={topUpOpen}
+        onOpenChange={setTopUpOpen}
+        currentCredits={credits}
+        onCreditsAdded={(newAmount) => setCredits(newAmount)}
       />
     </div>
   );

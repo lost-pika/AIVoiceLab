@@ -5,8 +5,7 @@
 
 @theme {
   --font-sans:
-    var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    var(--font-sans), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 @theme inline {
@@ -135,15 +134,15 @@
 }
 
 .glow-cyan {
-  box-shadow: 0 0 25px -4px rgba(6, 182, 212, 0.45);
+  box-shadow: 0 0 16px -2px rgba(6, 182, 212, 0.18);
 }
 
 .glow-emerald {
-  box-shadow: 0 0 25px -4px rgba(16, 185, 129, 0.45);
+  box-shadow: 0 0 16px -2px rgba(16, 185, 129, 0.18);
 }
 
 .glow-violet {
-  box-shadow: 0 0 25px -4px rgba(139, 92, 246, 0.45);
+  box-shadow: 0 0 16px -2px rgba(139, 92, 246, 0.18);
 }
 
 .studio-grid-bg {

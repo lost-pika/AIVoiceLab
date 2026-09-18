@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import { Coins, Plus, Sparkles } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Coins, Plus } from "lucide-react";
 import { AddCreditsModal } from "../credits/add-credits-modal";
 
 interface CreditsClientProps {
@@ -11,6 +11,29 @@ interface CreditsClientProps {
 export function CreditsClient({ initialCredits }: CreditsClientProps) {
   const [credits, setCredits] = useState(initialCredits);
   const [modalOpen, setModalOpen] = useState(false);
+
+  useEffect(() => {
+    setCredits(initialCredits);
+  }, [initialCredits]);
+
+  useEffect(() => {
+    const handleCreditsUpdated = (e: Event) => {
+      const customEvent = e as CustomEvent<number>;
+      if (typeof customEvent.detail === "number") {
+        setCredits(customEvent.detail);
+      }
+    };
+    window.addEventListener("credits-updated", handleCreditsUpdated);
+    return () =>
+      window.removeEventListener("credits-updated", handleCreditsUpdated);
+  }, []);
+
+  const handleCreditsChange = (newAmount: number) => {
+    setCredits(newAmount);
+    window.dispatchEvent(
+      new CustomEvent("credits-updated", { detail: newAmount }),
+    );
+  };
 
   return (
     <>
@@ -23,7 +46,6 @@ export function CreditsClient({ initialCredits }: CreditsClientProps) {
         <div className="flex items-center gap-2.5">
           <div className="relative flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-amber-500/10 text-amber-500 group-hover:bg-amber-500/20 group-hover:scale-105 transition-all">
             <Coins className="h-4 w-4 text-amber-500" />
-            <Sparkles className="absolute -top-1 -right-1 h-2.5 w-2.5 text-amber-400 opacity-0 group-hover:opacity-100 transition-opacity" />
           </div>
           <div>
             <div className="flex items-baseline gap-1">
@@ -47,7 +69,7 @@ export function CreditsClient({ initialCredits }: CreditsClientProps) {
         open={modalOpen}
         onOpenChange={setModalOpen}
         currentCredits={credits}
-        onCreditsAdded={(newAmount) => setCredits(newAmount)}
+        onCreditsAdded={handleCreditsChange}
       />
     </>
   );

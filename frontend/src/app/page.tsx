@@ -1,7 +1,6 @@
 import { Button } from "~/components/ui/button";
 import { Card, CardContent } from "~/components/ui/card";
 import {
-  Sparkles,
   Zap,
   Star,
   ArrowRight,
@@ -15,8 +14,8 @@ import {
   ShieldCheck,
   Globe2,
   Waves,
-  Cpu,
   Radio,
+  Volume2,
 } from "lucide-react";
 import Link from "next/link";
 import DemoSection from "~/components/demo-section";
@@ -57,9 +56,9 @@ export default async function HomePage() {
     },
     {
       icon: <Zap className="h-6 w-6" />,
-      title: "GPU Cloud Acceleration",
+      title: "High-Speed Audio Rendering",
       description:
-        "Cloud-accelerated inference powered by Modal and AWS S3 gives you studio-grade audio rendered in seconds.",
+        "High-performance cloud architecture delivers studio-grade audio synthesized in seconds.",
       color: "text-amber-400",
       bgColor: "bg-amber-500/10 border-amber-500/20",
     },
@@ -95,7 +94,7 @@ export default async function HomePage() {
     "Instant In-Card Voice Auditions",
     "Studio Master 48kHz WAV Exports",
     "Cloud Audio Storage & Media Vault",
-    "Dedicated Cloud GPU Acceleration",
+    "Priority High-Speed Audio Synthesis",
   ];
 
   return (
@@ -179,10 +178,10 @@ export default async function HomePage() {
 
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-3xl text-center">
-            {/* Engine Pill */}
+            {/* Studio Badge */}
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-cyan-400/30 bg-cyan-400/10 px-4 py-1.5 text-xs font-bold text-cyan-400">
-              <Cpu className="h-3.5 w-3.5" />
-              <span>Next-Gen F5-TTS Neural Workstation</span>
+              <Mic className="h-3.5 w-3.5" />
+              <span>Professional Voice Studio & Cloning</span>
             </div>
 
             <h1 className="mb-6 text-4xl font-black tracking-tight text-foreground sm:text-6xl leading-[1.08]">
@@ -381,11 +380,11 @@ export default async function HomePage() {
 
                 <Link href={isLoggedIn ? "/dashboard" : "/auth/sign-up"}>
                   <Button
-                    className="w-full gap-2 text-xs uppercase tracking-wider font-black rounded-xl bg-gradient-to-r from-cyan-400 to-emerald-400 text-black shadow-lg shadow-cyan-500/25 hover:opacity-95"
+                    className="w-full gap-2 text-xs uppercase tracking-wider font-bold rounded-xl bg-gradient-to-r from-cyan-400 to-emerald-400 text-black shadow-lg shadow-cyan-500/20 hover:opacity-95"
                     size="lg"
                   >
-                    <Sparkles className="h-4 w-4" />
-                    <span>{isLoggedIn ? "Open Command Center" : "Claim Free Account & 10 Credits"}</span>
+                    <Volume2 className="h-4 w-4" />
+                    <span>{isLoggedIn ? "Open Studio Dashboard" : "Claim Free Account & 20 Credits"}</span>
                   </Button>
                 </Link>
                 <p className="mt-3 text-center text-[11px] text-muted-foreground">

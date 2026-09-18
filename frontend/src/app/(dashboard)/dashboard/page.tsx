@@ -2,7 +2,6 @@
 
 import {
   Loader2,
-  Sparkles,
   Calendar,
   TrendingUp,
   Coins,
@@ -98,6 +97,16 @@ export default function Dashboard() {
     };
 
     void initializeDashboard();
+
+    const handleCreditsUpdated = (e: Event) => {
+      const customEvent = e as CustomEvent<number>;
+      if (typeof customEvent.detail === "number") {
+        setUser((prev) => (prev ? { ...prev, credits: customEvent.detail } : prev));
+      }
+    };
+    window.addEventListener("credits-updated", handleCreditsUpdated);
+    return () =>
+      window.removeEventListener("credits-updated", handleCreditsUpdated);
   }, []);
 
   if (isLoading) {
@@ -229,7 +238,7 @@ export default function Dashboard() {
       <Card className="border-border/60 bg-card/70 backdrop-blur-sm shadow-sm">
         <CardHeader className="pb-3 px-6 pt-5">
           <CardTitle className="text-sm font-bold uppercase tracking-wider text-foreground flex items-center gap-2">
-            <Sparkles className="h-4 w-4 text-cyan-400" />
+            <Mic className="h-4 w-4 text-cyan-400" />
             Studio Launchpad
           </CardTitle>
           <CardDescription className="text-xs">

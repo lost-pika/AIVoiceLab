@@ -1,6 +1,7 @@
 "use server";
 
 import { headers } from "next/headers";
+import { revalidatePath } from "next/cache";
 import { cache } from "react";
 import { env } from "~/env";
 import { getCurrentSession } from "~/lib/session";
@@ -19,6 +20,7 @@ interface GenerateSpeechResult {
   s3_key?: string;
   audioUrl?: string;
   projectId?: string;
+  remainingCredits?: number;
   error?: string;
 }
 
@@ -140,9 +142,10 @@ export async function generateSpeech(
 
     const audioUrl = `${getS3BucketUrl()}/${result.s3_Key}`;
 
-    await db.user.update({
+    const updatedUser = await db.user.update({
       where: { id: session.user.id },
       data: { credits: { decrement: creditsNeeded } },
+      select: { credits: true },
     });
 
     const audioProject = await db.audioProject.create({
@@ -158,11 +161,16 @@ export async function generateSpeech(
       },
     });
 
+    revalidatePath("/dashboard");
+    revalidatePath("/dashboard/create");
+    revalidatePath("/dashboard/projects");
+
     return {
       success: true,
       s3_key: result.s3_Key,
       audioUrl,
       projectId: audioProject.id,
+      remainingCredits: updatedUser.credits,
     };
   } catch (error) {
     console.error("Speech generation error:", error);

@@ -73,18 +73,15 @@ export function BrandLogo({
       {logoMark}
 
       {showText && (
-        <div className="flex flex-col text-left">
-          <div className="flex items-center gap-1.5">
+        <div className="flex flex-col text-left justify-center">
+          <div className="flex items-center">
             <span
-              className={`font-black tracking-tight text-foreground ${textSize} font-sans leading-none`}
+              className={`font-extrabold tracking-tight text-foreground ${textSize} leading-snug`}
             >
-              VOXI<span className="text-primary bg-gradient-to-r from-cyan-400 to-emerald-400 bg-clip-text text-transparent">CRAFT</span>
-            </span>
-            <span className="rounded-full bg-primary/15 px-1.5 py-0.2 text-[9px] font-bold text-primary tracking-wider uppercase border border-primary/25">
-              LAB
+              Voxi<span className="bg-gradient-to-r from-cyan-400 to-emerald-400 bg-clip-text text-transparent">Craft</span>
             </span>
           </div>
-          <span className="text-[10px] text-muted-foreground font-medium tracking-wide">
+          <span className="text-[11px] text-muted-foreground font-medium tracking-normal leading-tight">
             AI Voice Studio
           </span>
         </div>

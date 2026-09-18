@@ -43,18 +43,18 @@ export default function AudioHistory({
       <div className="mb-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-border/50 pb-4">
         <div>
           <div className="flex items-center gap-2">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-cyan-500/10 text-cyan-400">
-              <Radio className="h-4 w-4" />
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 text-primary">
+              <Music className="h-4 w-4" />
             </div>
-            <h2 className="text-base font-bold text-foreground">
-              Session Master Tape Reel
+            <h2 className="text-sm font-semibold text-foreground">
+              Recent Generations
             </h2>
-            <span className="rounded-full bg-cyan-400/15 border border-cyan-400/30 px-2 py-0.5 text-[10px] font-bold text-cyan-400">
+            <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
               {generatedAudios.length} {generatedAudios.length === 1 ? "track" : "tracks"}
             </span>
           </div>
           <p className="text-xs text-muted-foreground mt-0.5">
-            Rendered high-fidelity audio takes produced during this session
+            History of audio generated during your current studio session
           </p>
         </div>
       </div>

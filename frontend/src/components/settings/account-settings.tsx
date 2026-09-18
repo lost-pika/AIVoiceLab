@@ -10,7 +10,6 @@ import {
   Coins,
   User as UserIcon,
   KeyRound,
-  Sparkles,
   Plus,
   Palette,
   Sun,
@@ -197,7 +196,6 @@ export function AccountSettings() {
               <span className="text-[11px] text-muted-foreground block font-medium">Account Tier</span>
               <div className="flex items-baseline gap-1.5 mt-1">
                 <span className="text-sm font-bold text-primary flex items-center gap-1">
-                  <Sparkles className="h-3.5 w-3.5" />
                   Creator Studio
                 </span>
               </div>

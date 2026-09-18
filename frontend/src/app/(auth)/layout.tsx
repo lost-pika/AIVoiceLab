@@ -1,7 +1,8 @@
 import type { ReactNode } from "react";
 import { Providers } from "~/components/providers";
-import { Sparkles, Mic, Zap, Target } from "lucide-react";
+import { Mic, Zap, Target } from "lucide-react";
 import Link from "next/link";
+import { BrandLogo } from "~/components/ui/brand-logo";
 
 export default function AuthLayout({ children }: { children: ReactNode }) {
   return (
@@ -12,17 +13,9 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
           <div className="bg-grid-white/[0.1] absolute inset-0 bg-[size:30px_30px]" />
           <div className="relative z-10 flex flex-col justify-center px-12 xl:px-16">
             {/* Logo */}
-            <Link
-              href="/"
-              className="mb-12 flex cursor-pointer items-center gap-3"
-            >
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-violet-400/30 bg-violet-500/20 backdrop-blur-sm">
-                <Sparkles className="h-7 w-7 text-violet-300" />
-              </div>
-              <span className="text-2xl font-bold text-violet-50">
-                AI Voice Studio
-              </span>
-            </Link>
+            <div className="mb-12">
+              <BrandLogo href="/" size="lg" />
+            </div>
 
             {/* Hero Content */}
             <div className="max-w-md">
@@ -99,17 +92,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
           <div className="sm:mx-auto sm:w-full sm:max-w-md">
             {/* Mobile Logo */}
             <div className="mb-8 text-center lg:hidden">
-              <Link
-                href="/"
-                className="inline-flex cursor-pointer items-center gap-2"
-              >
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-r from-violet-500 to-purple-600 shadow-lg">
-                  <Sparkles className="h-6 w-6 text-white" />
-                </div>
-                <span className="bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-xl font-bold text-transparent">
-                  AI Voice Studio
-                </span>
-              </Link>
+              <BrandLogo href="/" size="md" />
             </div>
 
             {/* Auth Form Container */}
