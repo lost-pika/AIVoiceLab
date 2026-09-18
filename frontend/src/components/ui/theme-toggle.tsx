@@ -32,7 +32,8 @@ export function ThemeToggle({ className, variant = "outline" }: ThemeToggleProps
     );
   }
 
-  const isDark = resolvedTheme === "dark";
+  const currentTheme = resolvedTheme ?? theme ?? "dark";
+  const isDark = currentTheme === "dark";
 
   return (
     <Button

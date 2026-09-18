@@ -12,7 +12,11 @@ import {
   KeyRound,
   Sparkles,
   Plus,
+  Palette,
+  Sun,
+  Moon,
 } from "lucide-react";
+import { useTheme } from "next-themes";
 import {
   Card,
   CardContent,
@@ -25,6 +29,9 @@ import { AddCreditsModal } from "~/components/credits/add-credits-modal";
 
 export function AccountSettings() {
   const { user, refreshSession } = useAuth();
+  const { theme, setTheme, resolvedTheme } = useTheme();
+  const currentTheme = resolvedTheme ?? theme ?? "dark";
+  const isDark = currentTheme === "dark";
 
   // Profile form state
   const [name, setName] = useState(user?.name ?? "");
@@ -268,8 +275,82 @@ export function AccountSettings() {
           </form>
         </CardContent>
       </Card>
+ 
+       {/* Studio Appearance Card */}
+       <Card className="border-border/60 bg-card/60 backdrop-blur-sm shadow-sm">
+         <CardHeader>
+           <div className="flex items-center gap-2">
+             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-cyan-500/10 text-cyan-400">
+               <Palette className="h-4 w-4" />
+             </div>
+             <div>
+               <CardTitle className="text-base font-bold text-foreground">Workstation Appearance</CardTitle>
+               <CardDescription className="text-xs">
+                 Choose your preferred workspace theme. Defaults to Cyber Obsidian with option for Arctic Studio.
+               </CardDescription>
+             </div>
+           </div>
+         </CardHeader>
+         <CardContent>
+           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-lg">
+             {/* Dark Mode Card */}
+             <button
+               type="button"
+               onClick={() => setTheme("dark")}
+               className={`flex items-start gap-3 rounded-xl border p-4 text-left transition-all ${
+                 isDark
+                   ? "border-cyan-400 bg-cyan-500/10 shadow-sm shadow-cyan-500/10 ring-1 ring-cyan-400"
+                   : "border-border/60 bg-background/50 hover:border-border hover:bg-background"
+               }`}
+             >
+               <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-black border border-cyan-500/30 text-cyan-400">
+                 <Moon className="h-4 w-4" />
+               </div>
+               <div className="flex-1">
+                 <div className="flex items-center justify-between">
+                   <span className="text-xs font-bold text-foreground">Cyber Obsidian</span>
+                   <span className="rounded-full bg-cyan-500/20 px-2 py-0.5 text-[9px] font-bold text-cyan-400 uppercase tracking-wider">
+                     Default
+                   </span>
+                 </div>
+                 <p className="mt-1 text-[11px] text-muted-foreground">
+                   Deep OLED obsidian void with glowing cyan & emerald audio workstation accents.
+                 </p>
+               </div>
+             </button>
 
-      {/* Password Security Card */}
+             {/* Light Mode Card */}
+             <button
+               type="button"
+               onClick={() => setTheme("light")}
+               className={`flex items-start gap-3 rounded-xl border p-4 text-left transition-all ${
+                 !isDark
+                   ? "border-cyan-500 bg-cyan-500/10 shadow-sm shadow-cyan-500/10 ring-1 ring-cyan-500"
+                   : "border-border/60 bg-background/50 hover:border-border hover:bg-background"
+               }`}
+             >
+               <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-500">
+                 <Sun className="h-4 w-4" />
+               </div>
+               <div className="flex-1">
+                 <div className="flex items-center justify-between">
+                   <span className="text-xs font-bold text-foreground">Arctic Studio</span>
+                   {!isDark && (
+                     <span className="rounded-full bg-amber-500/20 px-2 py-0.5 text-[9px] font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">
+                       Active
+                     </span>
+                   )}
+                 </div>
+                 <p className="mt-1 text-[11px] text-muted-foreground">
+                   High-contrast pearl surfaces with crisp audio controls for bright environments.
+                 </p>
+               </div>
+             </button>
+           </div>
+         </CardContent>
+       </Card>
+
+       {/* Password Security Card */}
       <Card className="border-border/60 bg-card/60 backdrop-blur-sm shadow-sm">
         <CardHeader>
           <div className="flex items-center gap-2">
