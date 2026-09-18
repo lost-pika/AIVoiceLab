@@ -1,4 +1,4 @@
-import { UserButton } from "@daveyplate/better-auth-ui";
+import { UserButton } from "./user-button";
 import {
   Sidebar,
   SidebarContent,
@@ -50,9 +50,7 @@ export default function AppSidebar() {
           <Upgrade />
         </div>
         <UserButton
-          // variant="outline"
           className="border-muted-foreground/20 hover:border-primary/50 w-full transition-colors"
-          disableDefaultLinks={true}
           additionalLinks={
             polarEnabled
               ? [

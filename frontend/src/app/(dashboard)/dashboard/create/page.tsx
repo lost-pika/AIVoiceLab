@@ -1,6 +1,5 @@
 "use client";
 
-import { RedirectToSignIn, SignedIn } from "@daveyplate/better-auth-ui";
 import { Loader2 } from "lucide-react";
 import { authClient } from "~/lib/auth-client";
 import { useEffect, useState, useRef } from "react";
@@ -231,61 +230,58 @@ export default function CreatePage() {
 
   return (
     <>
-      <RedirectToSignIn />
-      <SignedIn>
-        <div className="border-b border-gray-200 bg-white py-2">
-          <div className="mx-auto max-w-7xl text-center">
-            <h1 className="from-primary to-primary/70 mb-1 bg-gradient-to-r bg-clip-text text-lg font-bold text-transparent">
-              Text-to-Speech Generator
-            </h1>
-            <p className="text-muted-foreground mx-auto max-w-xl text-xs">
-              Generate natural-sounding speech in 23 languages with voice
-              cloning
-            </p>
+      <div className="border-b border-gray-200 bg-white py-2">
+        <div className="mx-auto max-w-7xl text-center">
+          <h1 className="from-primary to-primary/70 mb-1 bg-gradient-to-r bg-clip-text text-lg font-bold text-transparent">
+            Text-to-Speech Generator
+          </h1>
+          <p className="text-muted-foreground mx-auto max-w-xl text-xs">
+            Generate natural-sounding speech in 23 languages with voice
+            cloning
+          </p>
+        </div>
+      </div>
+      {/* Main Content Area */}
+      <div className="mx-auto max-w-7xl px-2 py-4 sm:px-4 sm:py-6">
+        <div className="grid grid-cols-1 gap-2 sm:gap-4 lg:grid-cols-3">
+          {/* Left Side - Controls (1/3 width) */}
+          <div className="order-2 space-y-2 sm:space-y-3 lg:order-1 lg:col-span-1">
+            <SpeechSettings
+              languages={LANGUAGES}
+              voiceFiles={VOICE_FILES}
+              selectedLanguage={selectedLanguage}
+              setSelectedLanguage={setSelectedLanguage}
+              selectedVoice={selectedVoice}
+              setSelectedVoice={setSelectedVoice}
+              exaggeration={exaggeration}
+              setExaggeration={setExaggeration}
+              cfgWeight={cfgWeight}
+              setCfgWeight={setCfgWeight}
+              userUploadedVoices={userUploadedVoices}
+              isUploadingVoice={isUploadingVoice}
+              handleVoiceUpload={handleVoiceUpload}
+              text={text}
+              isGenerating={isGenerating}
+              onGenerate={generateSpeech}
+            />
+          </div>
+          <div className="order-1 space-y-2 sm:space-y-3 lg:order-2 lg:col-span-2">
+            <TextInput
+              text={text}
+              setText={setText}
+              currentAudio={currentAudio}
+              audioRef={audioRef}
+              onDownload={downloadAudio}
+            />
           </div>
         </div>
-        {/* Main Content Area */}
-        <div className="mx-auto max-w-7xl px-2 py-4 sm:px-4 sm:py-6">
-          <div className="grid grid-cols-1 gap-2 sm:gap-4 lg:grid-cols-3">
-            {/* Left Side - Controls (1/3 width) */}
-            <div className="order-2 space-y-2 sm:space-y-3 lg:order-1 lg:col-span-1">
-              <SpeechSettings
-                languages={LANGUAGES}
-                voiceFiles={VOICE_FILES}
-                selectedLanguage={selectedLanguage}
-                setSelectedLanguage={setSelectedLanguage}
-                selectedVoice={selectedVoice}
-                setSelectedVoice={setSelectedVoice}
-                exaggeration={exaggeration}
-                setExaggeration={setExaggeration}
-                cfgWeight={cfgWeight}
-                setCfgWeight={setCfgWeight}
-                userUploadedVoices={userUploadedVoices}
-                isUploadingVoice={isUploadingVoice}
-                handleVoiceUpload={handleVoiceUpload}
-                text={text}
-                isGenerating={isGenerating}
-                onGenerate={generateSpeech}
-              />
-            </div>
-            <div className="order-1 space-y-2 sm:space-y-3 lg:order-2 lg:col-span-2">
-              <TextInput
-                text={text}
-                setText={setText}
-                currentAudio={currentAudio}
-                audioRef={audioRef}
-                onDownload={downloadAudio}
-              />
-            </div>
-          </div>
-          <AudioHistory
-            generatedAudios={generatedAudios}
-            languages={LANGUAGES}
-            onPlay={playAudio}
-            onDownload={downloadAudio}
-          />
-        </div>
-      </SignedIn>
+        <AudioHistory
+          generatedAudios={generatedAudios}
+          languages={LANGUAGES}
+          onPlay={playAudio}
+          onDownload={downloadAudio}
+        />
+      </div>
     </>
   );
 }

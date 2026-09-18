@@ -1,6 +1,5 @@
 "use client";
 
-import { RedirectToSignIn, SignedIn } from "@daveyplate/better-auth-ui";
 
 import {
   Loader2,
@@ -132,10 +131,7 @@ export default function Projects() {
   }
 
   return (
-    <>
-      <RedirectToSignIn />
-      <SignedIn>
-        <div className="space-y-6">
+    <div className="space-y-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="space-y-2">
               <h1 className="from-primary to-primary/70 bg-gradient-to-r bg-clip-text text-2xl font-bold tracking-tight text-transparent sm:text-3xl">
@@ -282,7 +278,5 @@ export default function Projects() {
             </>
           )}
         </div>
-      </SignedIn>
-    </>
   );
 }

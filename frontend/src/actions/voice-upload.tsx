@@ -8,8 +8,7 @@ import {
 
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
-import { auth } from "~/lib/auth";
-import { headers } from "next/headers";
+import { getCurrentSession } from "~/lib/session";
 
 import { env } from "~/env";
 import { db } from "~/server/db";
@@ -35,9 +34,7 @@ export async function uploadVoice(
   formData: FormData,
 ): Promise<UploadVoiceResult> {
   try {
-    const session = await auth.api.getSession({
-      headers: await headers(),
-    });
+    const session = await getCurrentSession();
 
     if (!session?.user?.id) {
       return { success: false, error: "Unauthorized" };
@@ -109,9 +106,7 @@ export async function uploadVoice(
 
 export const getUserUploadedVoices = cache(async () => {
   try {
-    const session = await auth.api.getSession({
-      headers: await headers(),
-    });
+    const session = await getCurrentSession();
 
     if (!session?.user?.id) {
       return { success: false, error: "Unauthorized", voices: [] };

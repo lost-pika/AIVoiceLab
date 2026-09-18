@@ -1,7 +1,6 @@
-import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import CustomerPortalRedirect from '~/components/sidebar/CustomerPortalRedirect';
-import { auth } from '~/lib/auth';
+import { getCurrentSession } from '~/lib/session';
 
 export const dynamic = 'force-dynamic';
 
@@ -10,9 +9,7 @@ export default async function Page() {
     redirect('/dashboard');
   }
 
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await getCurrentSession();
   if (!session) {
     redirect('/auth/sign-in');
   }

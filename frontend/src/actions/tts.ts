@@ -3,7 +3,7 @@
 import { headers } from "next/headers";
 import { cache } from "react";
 import { env } from "~/env";
-import { auth } from "~/lib/auth";
+import { getCurrentSession } from "~/lib/session";
 import { db } from "~/server/db";
 
 interface GenerateSpeechData {
@@ -55,9 +55,7 @@ export async function generateSpeech(
   data: GenerateSpeechData,
 ): Promise<GenerateSpeechResult> {
   try {
-    const session = await auth.api.getSession({
-      headers: await headers(),
-    });
+    const session = await getCurrentSession();
 
     if (!session?.user?.id) {
       return { success: false, error: "Unauthorized" };
@@ -171,9 +169,7 @@ export async function generateSpeech(
 
 export const getUserAudioProjects = cache(async () => {
   try {
-    const session = await auth.api.getSession({
-      headers: await headers(),
-    });
+    const session = await getCurrentSession();
 
     if (!session?.user?.id) {
       return { success: false, error: "Unauthorized" };
@@ -193,9 +189,7 @@ export const getUserAudioProjects = cache(async () => {
 
 export const getUserCredits = cache(async () => {
   try {
-    const session = await auth.api.getSession({
-      headers: await headers(),
-    });
+    const session = await getCurrentSession();
 
     if (!session?.user?.id) {
       return { success: false, error: "Unauthorized", credits: 0 };
@@ -219,9 +213,7 @@ export const getUserCredits = cache(async () => {
 
 export async function deleteAudioProject(id: string) {
   try {
-    const session = await auth.api.getSession({
-      headers: await headers(),
-    });
+    const session = await getCurrentSession();
 
     if (!session?.user?.id) {
       return { success: false, error: "Unauthorized" };

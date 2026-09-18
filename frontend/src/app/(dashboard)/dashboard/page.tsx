@@ -1,6 +1,5 @@
 "use client";
 
-import { RedirectToSignIn, SignedIn } from "@daveyplate/better-auth-ui";
 import {
   Loader2,
   Sparkles,
@@ -106,18 +105,15 @@ export default function Dashboard() {
   }
 
   return (
-    <>
-      <RedirectToSignIn />
-      <SignedIn>
-        <div className="space-y-6">
-          <div className="space-y-2">
-            <h1 className="from-primary to-primary/70 bg-gradient-to-r bg-clip-text text-2xl font-bold tracking-tight text-transparent sm:text-3xl">
-              Welcome back{user?.name ? `, ${user.name}` : ""}!
-            </h1>
-            <p className="text-muted-foreground text-base sm:text-lg">
-              Here&apos;s an overview of your Text-to-Speech workspace
-            </p>
-          </div>
+    <div className="space-y-6">
+      <div className="space-y-2">
+        <h1 className="from-primary to-primary/70 bg-gradient-to-r bg-clip-text text-2xl font-bold tracking-tight text-transparent sm:text-3xl">
+          Welcome back{user?.name ? `, ${user.name}` : ""}!
+        </h1>
+        <p className="text-muted-foreground text-base sm:text-lg">
+          Here&apos;s an overview of your Text-to-Speech workspace
+        </p>
+      </div>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <Card className="relative overflow-hidden">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -320,7 +316,5 @@ export default function Dashboard() {
             </CardContent>
           </Card>
         </div>
-      </SignedIn>
-    </>
   );
 }
